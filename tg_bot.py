@@ -99,7 +99,7 @@ class CyberFaceBot:
         self.log("Starting SSH tunnel to localhost.run...")
         try:
             self.tunnel_process = subprocess.Popen(
-                ["ssh", "-o", "StrictHostKeyChecking=no", "-R", "80:127.0.0.1:23789", "nokey@localhost.run"],
+                ["ssh", "-i", ssh_key_path, "-o", "StrictHostKeyChecking=no", "-R", "80:127.0.0.1:23789", "nokey@localhost.run"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
