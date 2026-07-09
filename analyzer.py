@@ -82,7 +82,7 @@ class FaceGeometryAnalyzer:
         angle = np.arccos(cos_angle)
         return float(np.degrees(angle))
 
-    def analyze_frame(self, frame, target_group="Universal"):
+    def analyze_frame(self, frame, target_group="Universal", draw_hud=False):
         """
         Analyzes a single frame for facial geometry and prepares a face crop.
         Returns:
@@ -294,6 +294,51 @@ class FaceGeometryAnalyzer:
         metrics["details"] = details
 
         # ------------------- 3. DRAW NEON HUD OVERLAY -------------------
-        # All HUD drawing overlays removed by user request for a completely clean camera/photo view.
-        
+        if draw_hud:
+            # Color palette (BGR format for OpenCV)
+            neon_cyan = (255, 240, 0)      # Neon Cyber Cyan
+            neon_magenta = (127, 0, 255)   # Neon Cyber Magenta
+            neon_green = (100, 255, 0)     # Neon Cyber Green
+            
+            # Draw all 468 landmark points as tiny holographic points
+            for pt in pts:
+                cv2.circle(processed_frame, pt, 1, neon_cyan, -1)
+                
+            # Draw major structural feature lines
+            contours = [
+                # Face Silhouette / Oval
+                [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109, 10],
+                # Left Eye Contour
+                [33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246, 33],
+                # Right Eye Contour
+                [263, 249, 390, 373, 374, 380, 381, 382, 362, 398, 384, 385, 386, 387, 388, 466, 263],
+                # Left Eyebrow
+                [70, 63, 105, 66, 107],
+                # Right Eyebrow
+                [300, 293, 334, 296, 336],
+                # Lips Outer Outline
+                [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 308, 324, 318, 402, 317, 311, 310, 415, 308, 291],
+                # Nose Bridge and Base
+                [168, 6, 197, 195, 5, 4, 2, 98, 97]
+            ]
+            
+            for contour in contours:
+                contour_pts = np.array([pts[idx] for idx in contour], dtype=np.int32)
+                cv2.polylines(processed_frame, [contour_pts], False, neon_cyan, 1, cv2.LINE_AA)
+                
+            # Symmetry horizontal and vertical lines (Frontal pose only)
+            if metrics["pose"] == "Frontal":
+                # Draw the vertical central axis
+                cv2.line(processed_frame, pts[10], pts[152], neon_green, 1, cv2.LINE_AA)
+                
+                # Draw horizontal links between symmetry pairs
+                for left_idx, right_idx in self.symmetric_pairs:
+                    p_left = pts[left_idx]
+                    p_right = pts[right_idx]
+                    # Link line
+                    cv2.line(processed_frame, p_left, p_right, neon_magenta, 1, cv2.LINE_AA)
+                    # Node markers
+                    cv2.circle(processed_frame, p_left, 3, neon_magenta, -1)
+                    cv2.circle(processed_frame, p_right, 3, neon_magenta, -1)
+
         return processed_frame, face_crop, metrics

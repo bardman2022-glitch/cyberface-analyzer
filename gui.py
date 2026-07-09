@@ -120,6 +120,14 @@ class CyberFaceApp(ctk.CTk):
         self.group_combobox.set("Universal")
         self.group_combobox.place(x=20, y=95)
 
+        # HUD Overlay Toggle Switch
+        self.hud_switch = ctk.CTkSwitch(self.dash_frame, text="SHOW HUD MESH OVERLAY", 
+                                        font=ctk.CTkFont(family="Consolas", size=10, weight="bold"),
+                                        text_color=self.neon_cyan, fg_color="transparent",
+                                        progress_color=self.neon_cyan, command=self.on_hud_toggle)
+        self.hud_switch.select() # Default to enabled
+        self.hud_switch.place(x=20, y=130)
+
         # Section 1: AI Score
         self.ai_section_label = ctk.CTkLabel(self.dash_frame, text="=== AI ATTRACTIVENESS SCORE ===", 
                                              font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
@@ -252,28 +260,28 @@ class CyberFaceApp(ctk.CTk):
 
         # Row 2: Slots Buttons
         slot_font = ctk.CTkFont(family="Consolas", size=10)
-        self.btn_rt_frontal = ctk.CTkButton(self.rt_controls_frame, text="[ ] Frontal", 
-                                             fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_rt_frontal = ctk.CTkButton(self.rt_controls_frame, text="⬡ Frontal", 
+                                             fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                              font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Frontal"))
         self.btn_rt_frontal.place(x=15, y=65)
 
-        self.btn_rt_lsemi = ctk.CTkButton(self.rt_controls_frame, text="[ ] L.Semi", 
-                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_rt_lsemi = ctk.CTkButton(self.rt_controls_frame, text="⬡ L.Semi", 
+                                           fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Left Semi-profile"))
         self.btn_rt_lsemi.place(x=130, y=65)
 
-        self.btn_rt_rsemi = ctk.CTkButton(self.rt_controls_frame, text="[ ] R.Semi", 
-                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_rt_rsemi = ctk.CTkButton(self.rt_controls_frame, text="⬡ R.Semi", 
+                                           fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Right Semi-profile"))
         self.btn_rt_rsemi.place(x=245, y=65)
 
-        self.btn_rt_lprof = ctk.CTkButton(self.rt_controls_frame, text="[ ] L.Profile", 
-                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_rt_lprof = ctk.CTkButton(self.rt_controls_frame, text="⬡ L.Profile", 
+                                           fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Left Profile"))
         self.btn_rt_lprof.place(x=360, y=65)
 
-        self.btn_rt_rprof = ctk.CTkButton(self.rt_controls_frame, text="[ ] R.Profile", 
-                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_rt_rprof = ctk.CTkButton(self.rt_controls_frame, text="⬡ R.Profile", 
+                                           fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Right Profile"))
         self.btn_rt_rprof.place(x=475, y=65)
 
@@ -322,28 +330,28 @@ class CyberFaceApp(ctk.CTk):
         btn_h = 32
         font_p = ctk.CTkFont(family="Consolas", size=11)
         
-        self.btn_ph_frontal = ctk.CTkButton(self.tab_photo, text="[ ] Slot 1: Frontal", 
-                                            fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_ph_frontal = ctk.CTkButton(self.tab_photo, text="⬡ Slot 1: Frontal", 
+                                            fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                             font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Frontal"))
         self.btn_ph_frontal.place(x=10, y=285)
 
-        self.btn_ph_lsemi = ctk.CTkButton(self.tab_photo, text="[ ] Slot 2: L. Semi-profile", 
-                                          fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_ph_lsemi = ctk.CTkButton(self.tab_photo, text="⬡ Slot 2: L. Semi-profile", 
+                                          fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Left Semi-profile"))
         self.btn_ph_lsemi.place(x=10, y=320)
 
-        self.btn_ph_rsemi = ctk.CTkButton(self.tab_photo, text="[ ] Slot 3: R. Semi-profile", 
-                                          fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_ph_rsemi = ctk.CTkButton(self.tab_photo, text="⬡ Slot 3: R. Semi-profile", 
+                                          fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Right Semi-profile"))
         self.btn_ph_rsemi.place(x=10, y=355)
 
-        self.btn_ph_lprof = ctk.CTkButton(self.tab_photo, text="[ ] Slot 4: L. Profile", 
-                                          fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_ph_lprof = ctk.CTkButton(self.tab_photo, text="⬡ Slot 4: L. Profile", 
+                                          fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Left Profile"))
         self.btn_ph_lprof.place(x=10, y=390)
 
-        self.btn_ph_rprof = ctk.CTkButton(self.tab_photo, text="[ ] Slot 5: R. Profile", 
-                                          fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
+        self.btn_ph_rprof = ctk.CTkButton(self.tab_photo, text="⬡ Slot 5: R. Profile", 
+                                          fg_color="#101520", hover_color="#202a3d", text_color=self.text_muted, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Right Profile"))
         self.btn_ph_rprof.place(x=10, y=425)
 
@@ -383,7 +391,7 @@ class CyberFaceApp(ctk.CTk):
     # ------------------- Select Slot in Photo Tab -------------------
     def select_photo_slot(self, pose):
         self.selected_pose = pose
-        self.lbl_selected_slot.configure(text=f"ВЫБРАННЫЙ СЛОТ: {pose.upper()}")
+        self.lbl_selected_slot.configure(text=f"SELECTED SLOT: {pose.upper()}")
         
         # Reset borders
         buttons = {
@@ -404,10 +412,10 @@ class CyberFaceApp(ctk.CTk):
             slot_data = self.slots[pose]
             if slot_data and slot_data["frame"] is not None:
                 group = self.get_selected_target_group_english()
-                hud_frame, _, _ = self.analyzer.analyze_frame(slot_data["frame"], target_group=group)
+                hud_frame, _, _ = self.analyzer.analyze_frame(slot_data["frame"], target_group=group, draw_hud=self.hud_switch.get())
                 self.display_photo_preview(hud_frame)
             else:
-                self.photo_preview_label.configure(image=self.empty_ctk_img, text=f"НЕТ ФОТО\n\nЗагрузите или снимите кадр\nдля слота: {pose}")
+                self.photo_preview_label.configure(image=self.empty_ctk_img, text=f"NO PHOTO\n\nUpload or capture frame\nfor slot: {pose}")
 
     # ------------------- Actions & Computations -------------------
     def get_selected_target_group_english(self):
@@ -426,6 +434,16 @@ class CyberFaceApp(ctk.CTk):
         self.status_label_rt.configure(text=f"CALIBRATION CHANGED: {self.group_combobox.get()}")
         if self.current_frame is not None and self.webcam_running:
             self.process_and_display_frame(self.current_frame)
+
+    def on_hud_toggle(self):
+        if self.current_frame is not None and self.webcam_running:
+            self.process_and_display_frame(self.current_frame)
+        elif not self.photo_webcam_active:
+            slot_data = self.slots[self.selected_pose]
+            if slot_data and slot_data["frame"] is not None:
+                group = self.get_selected_target_group_english()
+                hud_frame, _, _ = self.analyzer.analyze_frame(slot_data["frame"], target_group=group, draw_hud=self.hud_switch.get())
+                self.display_photo_preview(hud_frame)
 
     def toggle_photo_webcam(self):
         if self.photo_webcam_active:
@@ -523,18 +541,9 @@ class CyberFaceApp(ctk.CTk):
         padded_frame[dy:dy+new_h, dx:dx+new_w] = frame
 
         group = self.get_selected_target_group_english()
-        
-        # Translate pose name for user status display
-        pose_ru = {
-            "Frontal": "Анфас",
-            "Left Semi-profile": "Левый Полупрофиль",
-            "Right Semi-profile": "Правый Полупрофиль",
-            "Left Profile": "Левый Профиль",
-            "Right Profile": "Правый Профиль"
-        }.get(pose, pose)
 
         # Analyze
-        hud_frame, face_crop, metrics = self.analyzer.analyze_frame(padded_frame, target_group=group)
+        hud_frame, face_crop, metrics = self.analyzer.analyze_frame(padded_frame, target_group=group, draw_hud=self.hud_switch.get())
         
         if not metrics["detected"]:
             # Fallback
@@ -606,7 +615,7 @@ class CyberFaceApp(ctk.CTk):
             
         ret, frame = self.cap.read()
         if not ret:
-            self.status_label_rt.configure(text="СТАТУС: ОШИБКА ЗАХВАТА КАДРА", text_color=self.neon_magenta)
+            self.status_label_rt.configure(text="STATUS: FRAME CAPTURE ERROR", text_color=self.neon_magenta)
             return
 
         frame = cv2.flip(frame, 1)
@@ -620,7 +629,7 @@ class CyberFaceApp(ctk.CTk):
         group = self.get_selected_target_group_english()
         
         # Analyze frame
-        hud_frame, face_crop, metrics = self.analyzer.analyze_frame(frame, target_group=group)
+        hud_frame, face_crop, metrics = self.analyzer.analyze_frame(frame, target_group=group, draw_hud=self.hud_switch.get())
         
         if metrics["detected"] and face_crop is not None:
             # Asynchronous quick prediction to prevent webcam frame lag
@@ -771,35 +780,39 @@ class CyberFaceApp(ctk.CTk):
             self.btn_run_deep.configure(state="normal")
 
     def update_button_states_for_slot(self, pose, score):
+        tier_text, tier_color = self.get_tier_info(score)
+        
         buttons_rt = {
-            "Frontal": (self.btn_rt_frontal, f"[X] Frontal ({score:.1f})", self.neon_cyan),
-            "Left Semi-profile": (self.btn_rt_lsemi, f"[X] L.Semi ({score:.1f})", self.neon_magenta),
-            "Right Semi-profile": (self.btn_rt_rsemi, f"[X] R.Semi ({score:.1f})", self.neon_magenta),
-            "Left Profile": (self.btn_rt_lprof, f"[X] L.Profile ({score:.1f})", self.neon_green),
-            "Right Profile": (self.btn_rt_rprof, f"[X] R.Profile ({score:.1f})", self.neon_green)
+            "Frontal": (self.btn_rt_frontal, f"⬢ Frontal ({score:.2f})"),
+            "Left Semi-profile": (self.btn_rt_lsemi, f"⬢ L.Semi ({score:.2f})"),
+            "Right Semi-profile": (self.btn_rt_rsemi, f"⬢ R.Semi ({score:.2f})"),
+            "Left Profile": (self.btn_rt_lprof, f"⬢ L.Profile ({score:.2f})"),
+            "Right Profile": (self.btn_rt_rprof, f"⬢ R.Profile ({score:.2f})")
         }
         buttons_ph = {
-            "Frontal": (self.btn_ph_frontal, f"[X] Slot 1: Frontal ({score:.1f})", self.neon_cyan),
-            "Left Semi-profile": (self.btn_ph_lsemi, f"[X] Slot 2: L. Semi-profile ({score:.1f})", self.neon_magenta),
-            "Right Semi-profile": (self.btn_ph_rsemi, f"[X] Slot 3: R. Semi-profile ({score:.1f})", self.neon_magenta),
-            "Left Profile": (self.btn_ph_lprof, f"[X] Slot 4: L. Profile ({score:.1f})", self.neon_green),
-            "Right Profile": (self.btn_ph_rprof, f"[X] Slot 5: R. Profile ({score:.1f})", self.neon_green)
+            "Frontal": (self.btn_ph_frontal, f"⬢ Slot 1: Frontal ({score:.2f})"),
+            "Left Semi-profile": (self.btn_ph_lsemi, f"⬢ Slot 2: L. Semi-profile ({score:.2f})"),
+            "Right Semi-profile": (self.btn_ph_rsemi, f"⬢ Slot 3: R. Semi-profile ({score:.2f})"),
+            "Left Profile": (self.btn_ph_lprof, f"⬢ Slot 4: L. Profile ({score:.2f})"),
+            "Right Profile": (self.btn_ph_rprof, f"⬢ Slot 5: R. Profile ({score:.2f})")
         }
 
         # Update RT
-        btn_rt, text_rt, color = buttons_rt[pose]
-        btn_rt.configure(text=text_rt, fg_color=color, text_color="#000000")
+        btn_rt, text_rt = buttons_rt[pose]
+        btn_rt.configure(text=text_rt, fg_color=self.card_color, text_color=tier_color, border_width=1, border_color=tier_color)
         
         # Update Photo
-        btn_ph, text_ph, color = buttons_ph[pose]
-        btn_ph.configure(text=text_ph, fg_color=color, text_color="#000000")
+        btn_ph, text_ph = buttons_ph[pose]
+        is_selected = (self.selected_pose == pose)
+        border_col = self.neon_cyan if is_selected else tier_color
+        btn_ph.configure(text=text_ph, fg_color=self.card_color, text_color=tier_color, border_width=1, border_color=border_col)
 
         # Refresh preview if active selection matches pose
         if self.selected_pose == pose and not self.photo_webcam_active:
             slot_data = self.slots[pose]
             if slot_data and slot_data["frame"] is not None:
                 group = self.get_selected_target_group_english()
-                hud_frame, _, _ = self.analyzer.analyze_frame(slot_data["frame"], target_group=group)
+                hud_frame, _, _ = self.analyzer.analyze_frame(slot_data["frame"], target_group=group, draw_hud=self.hud_switch.get())
                 self.display_photo_preview(hud_frame)
 
     # ------------------- Deep Multi-Angle Analysis -------------------
@@ -986,18 +999,18 @@ class CyberFaceApp(ctk.CTk):
         for key in self.slots:
             self.slots[key] = None
             
-        # Reset buttons texts
-        self.btn_rt_frontal.configure(text="[ ] Frontal", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_lsemi.configure(text="[ ] L.Semi", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_rsemi.configure(text="[ ] R.Semi", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_lprof.configure(text="[ ] L.Profile", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_rprof.configure(text="[ ] R.Profile", fg_color="#101520", text_color=self.neon_cyan)
+        # Reset buttons texts & styles
+        self.btn_rt_frontal.configure(text="⬡ Frontal", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_rt_lsemi.configure(text="⬡ L.Semi", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_rt_rsemi.configure(text="⬡ R.Semi", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_rt_lprof.configure(text="⬡ L.Profile", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_rt_rprof.configure(text="⬡ R.Profile", fg_color="#101520", text_color=self.text_muted, border_width=0)
 
-        self.btn_ph_frontal.configure(text="[ ] Slot 1: Frontal", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_lsemi.configure(text="[ ] Slot 2: L. Semi-profile", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_rsemi.configure(text="[ ] Slot 3: R. Semi-profile", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_lprof.configure(text="[ ] Slot 4: L. Profile", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_rprof.configure(text="[ ] Slot 5: R. Profile", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_ph_frontal.configure(text="⬡ Slot 1: Frontal", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_ph_lsemi.configure(text="⬡ Slot 2: L. Semi-profile", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_ph_rsemi.configure(text="⬡ Slot 3: R. Semi-profile", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_ph_lprof.configure(text="⬡ Slot 4: L. Profile", fg_color="#101520", text_color=self.text_muted, border_width=0)
+        self.btn_ph_rprof.configure(text="⬡ Slot 5: R. Profile", fg_color="#101520", text_color=self.text_muted, border_width=0)
 
         self.btn_combined_rt.configure(state="disabled")
         self.btn_run_deep.configure(state="disabled")
