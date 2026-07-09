@@ -10,13 +10,80 @@ import time
 from analyzer import FaceGeometryAnalyzer
 from predictor import BeautyPredictor
 
+TRANSLATIONS = {
+    "English": {
+        "title": "CYBERFACE ANALYZER // HYBRID GEOMETRIC & NEURAL HUD",
+        "header": "CYBERFACE ANALYZER",
+        "subtitle": "CYBER COMPUTE HUD 4.0",
+        "calib_target": "TARGET GROUP / CALIBRATION:",
+        "show_mesh": "SHOW HUD MESH OVERLAY",
+        "ai_score_sec": "=== AI ATTRACTIVENESS SCORE ===",
+        "geom_sec": "=== GEOMETRIC SYMMETRY HUD ===",
+        "telemetry_sec": "=== TELEMETRY ANALYSIS LOG ===",
+        "start_cam": "START CAMERA",
+        "stop_cam": "STOP CAMERA",
+        "lock_pose": "LOCK POSE",
+        "reset": "RESET",
+        "combined_score": "COMBINED SCORE",
+        "status_wait": "STATUS: WAITING FOR START",
+        "info_scan": "In scanner mode AI outputs real-time rating score",
+        "take_snap": "TAKE SNAPSHOT",
+        "upload_file": "UPLOAD FILE",
+        "deep_analysis": "DEEP ANALYSIS",
+        "reset_photos": "RESET PHOTOS",
+        "tg_sec": "=== TELEGRAM BOT INTEGRATION ===",
+        "bot_inactive": "BOT STATUS: INACTIVE",
+        "bot_active": "BOT STATUS: ACTIVE",
+        "bot_starting": "BOT STATUS: STARTING...",
+        "bot_err": "BOT STATUS: ERROR",
+        "copy_ssh": "🔑 COPY SSH KEY",
+        "lang_lbl": "INTERFACE LANGUAGE / ЯЗЫК ИНТЕРФЕЙСА:",
+        "ssh_lbl": "PUBLIC SSH KEY (FOR TELEGRAM MINI APP):",
+        "gen_ssh": "GENERATE NEW SSH KEY",
+        "start_bot": "START BOT",
+        "stop_bot": "STOP BOT",
+    },
+    "Russian": {
+        "title": "CYBERFACE ANALYZER // ГИБРИДНЫЙ ГЕОМЕТРИЧЕСКИЙ И НЕЙРОСЕТЕВОЙ HUD",
+        "header": "CYBERFACE ANALYZER",
+        "subtitle": "ВЫЧИСЛИТЕЛЬНЫЙ HUD 4.0",
+        "calib_target": "ЦЕЛЕВАЯ ГРУППА / КАЛИБРОВКА:",
+        "show_mesh": "ПОКАЗЫВАТЬ HUD-СЕТКУ ЛИЦА",
+        "ai_score_sec": "=== НЕЙРОСЕТЕВАЯ ОЦЕНКА ===",
+        "geom_sec": "=== ГЕОМЕТРИЧЕСКАЯ СИММЕТРИЯ ===",
+        "telemetry_sec": "=== ЛОГ ТЕЛЕМЕТРИИ И АНАЛИЗА ===",
+        "start_cam": "ЗАПУСТИТЬ КАМЕРУ",
+        "stop_cam": "ОСТАНОВИТЬ КАМЕРУ",
+        "lock_pose": "ЗАФИКСИРОВАТЬ",
+        "reset": "СБРОСИТЬ",
+        "combined_score": "ОБЩИЙ БАЛЛ",
+        "status_wait": "СТАТУС: ОЖИДАНИЕ ЗАПУСКА",
+        "info_scan": "В режиме сканирования ИИ выводит оценку в реальном времени",
+        "take_snap": "СДЕЛАТЬ СНИМОК",
+        "upload_file": "ЗАГРУЗИТЬ ФАЙЛ",
+        "deep_analysis": "ГЛУБОКИЙ АНАЛИЗ",
+        "reset_photos": "СБРОСИТЬ ФОТО",
+        "tg_sec": "=== ИНТЕГРАЦИЯ С ТЕЛЕГРАМ-БОТОМ ===",
+        "bot_inactive": "СТАТУС БОТА: НЕАКТИВЕН",
+        "bot_active": "СТАТУС БОТА: АКТИВЕН",
+        "bot_starting": "СТАТУС БОТА: ЗАПУСК...",
+        "bot_err": "СТАТУС БОТА: ОШИБКА",
+        "copy_ssh": "🔑 СКОПИРОВАТЬ SSH КЛЮЧ",
+        "lang_lbl": "ЯЗЫК ИНТЕРФЕЙСА / INTERFACE LANGUAGE:",
+        "ssh_lbl": "ПУБЛИЧНЫЙ SSH-КЛЮЧ (ДЛЯ TELEGRAM MINI APP):",
+        "gen_ssh": "СОЗДАТЬ НОВЫЙ SSH-КЛЮЧ",
+        "start_bot": "ЗАПУСТИТЬ БОТА",
+        "stop_bot": "ОСТАНОВИТЬ БОТА",
+    }
+}
+
 class CyberFaceApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
         # Window configuration
         self.title("CYBERFACE ANALYZER // HYBRID GEOMETRIC & NEURAL HUD")
-        self.geometry("1100x800")
+        self.geometry("1100x700")
         self.resizable(False, False)
 
         # Set theme and color options
@@ -89,6 +156,7 @@ class CyberFaceApp(ctk.CTk):
         
         self.tab_rt = self.tabview.add("Real-time Scanner")
         self.tab_photo = self.tabview.add("Photo Rating")
+        self.tab_config = self.tabview.add("Configuration")
         
         # Setup Tab 1: Real-time Scan
         self.setup_realtime_tab()
@@ -96,8 +164,11 @@ class CyberFaceApp(ctk.CTk):
         # Setup Tab 2: Photo Rating
         self.setup_photo_tab()
 
+        # Setup Tab 3: Configuration
+        self.setup_config_tab()
+
         # ------------------- Right Column: Dashboard -------------------
-        self.dash_frame = ctk.CTkFrame(self, width=400, height=750, fg_color=self.card_color, border_width=1, border_color="#1f293d")
+        self.dash_frame = ctk.CTkFrame(self, width=400, height=650, fg_color=self.card_color, border_width=1, border_color="#1f293d")
         self.dash_frame.place(x=680, y=20)
 
         # Header Title
@@ -211,37 +282,6 @@ class CyberFaceApp(ctk.CTk):
         self.log_box.place(x=20, y=450)
         self.log_box.insert("0.0", "Waiting for face detection...\n")
         self.log_box.configure(state="disabled")
-
-        # Section 4: Telegram Bot Integration
-        self.bot_section_label = ctk.CTkLabel(self.dash_frame, text="=== TELEGRAM BOT INTEGRATION ===", 
-                                              font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
-                                              text_color=self.neon_magenta)
-        self.bot_section_label.place(x=20, y=640)
-
-        self.bot_token_entry = ctk.CTkEntry(self.dash_frame, width=250, height=30, 
-                                            placeholder_text="Enter Telegram Bot Token...", 
-                                            show="*", font=ctk.CTkFont(family="Consolas", size=11))
-        self.bot_token_entry.place(x=20, y=665)
-        self.bind_entry_shortcuts(self.bot_token_entry)
-
-        self.btn_toggle_bot = ctk.CTkButton(self.dash_frame, text="START BOT", 
-                                            fg_color="#1f2d3d", hover_color=self.neon_green, 
-                                            border_width=1, border_color=self.neon_green,
-                                            text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
-                                            width=100, height=30, command=self.toggle_telegram_bot)
-        self.btn_toggle_bot.place(x=280, y=665)
-
-        self.lbl_bot_status = ctk.CTkLabel(self.dash_frame, text="BOT STATUS: INACTIVE", 
-                                           font=ctk.CTkFont(family="Consolas", size=10, weight="bold"), 
-                                           text_color=self.text_muted)
-        self.lbl_bot_status.place(x=20, y=705)
-
-        self.btn_copy_ssh = ctk.CTkButton(self.dash_frame, text="🔑 COPY SSH KEY", 
-                                          fg_color="#101520", hover_color="#1f2d3d",
-                                          text_color=self.neon_cyan, border_width=1, border_color=self.neon_cyan,
-                                          font=ctk.CTkFont(family="Consolas", size=10, weight="bold"),
-                                          width=110, height=22, command=self.copy_ssh_key_to_clipboard)
-        self.btn_copy_ssh.place(x=270, y=705)
 
     # ------------------- Tab 1: Real-time Scan Layout -------------------
     def setup_realtime_tab(self):
@@ -479,6 +519,158 @@ class CyberFaceApp(ctk.CTk):
                 group = self.get_selected_target_group_english()
                 hud_frame, _, _ = self.analyzer.analyze_frame(slot_data["frame"], target_group=group, draw_hud=self.hud_switch.get())
                 self.display_photo_preview(hud_frame)
+
+    def setup_config_tab(self):
+        # 1. Interface Language Section
+        self.lbl_lang = ctk.CTkLabel(self.tab_config, text="INTERFACE LANGUAGE / ЯЗЫК ИНТЕРФЕЙСА:", 
+                                     font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
+                                     text_color=self.neon_cyan)
+        self.lbl_lang.place(x=20, y=10)
+
+        self.lang_combobox = ctk.CTkComboBox(self.tab_config, 
+                                             values=["English", "Russian"],
+                                             font=ctk.CTkFont(family="Consolas", size=12),
+                                             width=250, height=30, command=self.on_lang_changed)
+        self.lang_combobox.set("English")
+        self.lang_combobox.place(x=20, y=35)
+
+        # 2. Telegram Bot Integration Section
+        self.bot_section_label_cfg = ctk.CTkLabel(self.tab_config, text="=== TELEGRAM BOT INTEGRATION ===", 
+                                                  font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
+                                                  text_color=self.neon_magenta)
+        self.bot_section_label_cfg.place(x=20, y=90)
+
+        self.bot_token_entry = ctk.CTkEntry(self.tab_config, width=450, height=30, 
+                                            placeholder_text="Enter Telegram Bot Token...", 
+                                            show="*", font=ctk.CTkFont(family="Consolas", size=11))
+        self.bot_token_entry.place(x=20, y=115)
+        self.bind_entry_shortcuts(self.bot_token_entry)
+
+        self.btn_toggle_bot = ctk.CTkButton(self.tab_config, text="START BOT", 
+                                            fg_color="#1f2d3d", hover_color=self.neon_green, 
+                                            border_width=1, border_color=self.neon_green,
+                                            text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
+                                            width=120, height=30, command=self.toggle_telegram_bot)
+        self.btn_toggle_bot.place(x=480, y=115)
+
+        self.lbl_bot_status = ctk.CTkLabel(self.tab_config, text="BOT STATUS: INACTIVE", 
+                                           font=ctk.CTkFont(family="Consolas", size=10, weight="bold"), 
+                                           text_color=self.text_muted)
+        self.lbl_bot_status.place(x=20, y=155)
+
+        # 3. SSH Key Management Section
+        self.lbl_ssh = ctk.CTkLabel(self.tab_config, text="PUBLIC SSH KEY (FOR TELEGRAM MINI APP):", 
+                                    font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
+                                    text_color=self.neon_cyan)
+        self.lbl_ssh.place(x=20, y=200)
+
+        self.txt_ssh_key = ctk.CTkTextbox(self.tab_config, width=580, height=100, 
+                                          fg_color="#080c14", text_color=self.neon_cyan, 
+                                          font=ctk.CTkFont(family="Consolas", size=10))
+        self.txt_ssh_key.place(x=20, y=225)
+        self.refresh_ssh_key_display()
+
+        # Action Buttons for SSH
+        self.btn_copy_ssh = ctk.CTkButton(self.tab_config, text="🔑 COPY SSH KEY", 
+                                          fg_color="#1f2d3d", hover_color=self.neon_cyan, 
+                                          border_width=1, border_color=self.neon_cyan,
+                                          text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
+                                          width=180, height=30, command=self.copy_ssh_key_to_clipboard)
+        self.btn_copy_ssh.place(x=20, y=340)
+
+        self.btn_gen_ssh = ctk.CTkButton(self.tab_config, text="GENERATE NEW SSH KEY", 
+                                         fg_color="#1a1e29", hover_color=self.neon_magenta, 
+                                         border_width=1, border_color=self.neon_magenta,
+                                         text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
+                                         width=220, height=30, command=self.regenerate_ssh_key)
+        self.btn_gen_ssh.place(x=210, y=340)
+
+    def on_lang_changed(self, event=None):
+        lang = self.lang_combobox.get()
+        self.apply_language(lang)
+
+    def apply_language(self, lang):
+        t = TRANSLATIONS[lang]
+        self.title(t["title"])
+        self.header_label.configure(text=t["header"])
+        self.sub_label.configure(text=t["subtitle"])
+        self.group_title.configure(text=t["calib_target"])
+        self.hud_switch.configure(text=t["show_mesh"])
+        self.ai_section_label.configure(text=t["ai_score_sec"])
+        self.geom_section_label.configure(text=t["geom_sec"])
+        self.log_section_label.configure(text=t["telemetry_sec"])
+        
+        # Real-time tab
+        self.btn_webcam.configure(text=t["start_cam"] if not self.webcam_running else t["stop_cam"])
+        self.btn_capture.configure(text=t["lock_pose"])
+        self.btn_reset_rt.configure(text=t["reset"])
+        self.btn_combined_rt.configure(text=t["combined_score"])
+        
+        # Photo tab
+        self.btn_photo_webcam.configure(text=t["start_cam"] if not self.photo_webcam_active else t["stop_cam"])
+        self.btn_photo_capture.configure(text=t["take_snap"])
+        self.btn_photo_file.configure(text=t["upload_file"])
+        self.btn_run_deep.configure(text=t["deep_analysis"])
+        self.btn_reset_photo.configure(text=t["reset_photos"])
+        
+        # Configuration tab
+        self.lbl_lang.configure(text=t["lang_lbl"])
+        self.lbl_ssh.configure(text=t["ssh_lbl"])
+        self.btn_copy_ssh.configure(text=t["copy_ssh"])
+        self.btn_gen_ssh.configure(text=t["gen_ssh"])
+        self.bot_section_label_cfg.configure(text=t["tg_sec"])
+        if not self.bot_running:
+            self.lbl_bot_status.configure(text=t["bot_inactive"])
+            self.btn_toggle_bot.configure(text=t["start_bot"])
+        else:
+            self.lbl_bot_status.configure(text=t["bot_active"])
+            self.btn_toggle_bot.configure(text=t["stop_bot"])
+
+    def refresh_ssh_key_display(self):
+        ssh_key_path = os.path.expanduser("~/.ssh/id_rsa.pub")
+        self.txt_ssh_key.configure(state="normal")
+        self.txt_ssh_key.delete("0.0", "end")
+        if os.path.exists(ssh_key_path):
+            try:
+                with open(ssh_key_path, "r", encoding="utf-8") as f:
+                    pub_key = f.read().strip()
+                self.txt_ssh_key.insert("0.0", pub_key)
+            except Exception as e:
+                self.txt_ssh_key.insert("0.0", f"Error reading SSH key: {e}")
+        else:
+            self.txt_ssh_key.insert("0.0", "No SSH key found. Start the bot or click Generate to create one.")
+        self.txt_ssh_key.configure(state="disabled")
+
+    def regenerate_ssh_key(self):
+        ssh_key_path = os.path.expanduser("~/.ssh/id_rsa")
+        from tkinter import messagebox
+        ans = messagebox.askyesno(
+            "Regenerate SSH Key",
+            "This will overwrite your existing SSH keypair with a new one.\n\n"
+            "Do you want to proceed?"
+        )
+        if ans:
+            ssh_dir = os.path.dirname(ssh_key_path)
+            if not os.path.exists(ssh_dir):
+                os.makedirs(ssh_dir)
+            if os.path.exists(ssh_key_path):
+                try:
+                    os.remove(ssh_key_path)
+                    os.remove(ssh_key_path + ".pub")
+                except Exception:
+                    pass
+            try:
+                import subprocess
+                subprocess.run(
+                    ["ssh-keygen", "-t", "rsa", "-b", "2048", "-N", "", "-f", ssh_key_path],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True
+                )
+                self.refresh_ssh_key_display()
+                self.log_to_console_on_gui("[GUI] New SSH keypair generated successfully.")
+            except Exception as e:
+                self.log_to_console_on_gui(f"[GUI] Error generating SSH key: {e}")
 
     def toggle_photo_webcam(self):
         if self.photo_webcam_active:
@@ -1201,18 +1393,21 @@ class CyberFaceApp(ctk.CTk):
         self.video_label.image = ctk_img
 
     def toggle_telegram_bot(self):
+        lang = self.lang_combobox.get()
+        t = TRANSLATIONS[lang]
+
         if self.bot_running:
             self.bot_running = False
             if self.bot_instance:
                 self.bot_instance.stop()
                 self.bot_instance = None
-            self.btn_toggle_bot.configure(text="START BOT", fg_color="#1f2d3d", border_color=self.neon_green, hover_color=self.neon_green)
-            self.lbl_bot_status.configure(text="BOT STATUS: INACTIVE", text_color=self.text_muted)
+            self.btn_toggle_bot.configure(text=t["start_bot"], fg_color="#1f2d3d", border_color=self.neon_green, hover_color=self.neon_green)
+            self.lbl_bot_status.configure(text=t["bot_inactive"], text_color=self.text_muted)
             self.log_to_console_on_gui("[GUI] Telegram bot stopped.")
         else:
             token = self.bot_token_entry.get().strip()
             if not token:
-                self.lbl_bot_status.configure(text="BOT STATUS: ERROR (NO TOKEN)", text_color=self.neon_magenta)
+                self.lbl_bot_status.configure(text=t["bot_err"] + " (NO TOKEN)", text_color=self.neon_magenta)
                 return
                 
             # Ensure SSH key exists (prompt user if missing)
@@ -1238,16 +1433,17 @@ class CyberFaceApp(ctk.CTk):
                             check=True
                         )
                         self.log_to_console_on_gui("[GUI] SSH keypair generated successfully.")
+                        self.refresh_ssh_key_display()
                     except Exception as e:
                         self.log_to_console_on_gui(f"[GUI] Error generating SSH key: {e}")
-                        self.lbl_bot_status.configure(text="BOT STATUS: ERROR (SSH KEY)", text_color=self.neon_magenta)
+                        self.lbl_bot_status.configure(text=t["bot_err"] + " (SSH KEY)", text_color=self.neon_magenta)
                         return
                 else:
                     self.log_to_console_on_gui("[GUI] SSH key generation cancelled. Tunnel will not connect.")
-                    self.lbl_bot_status.configure(text="BOT STATUS: ERROR (NO SSH KEY)", text_color=self.neon_magenta)
+                    self.lbl_bot_status.configure(text=t["bot_err"] + " (NO SSH KEY)", text_color=self.neon_magenta)
                     return
 
-            self.lbl_bot_status.configure(text="BOT STATUS: STARTING...", text_color=self.neon_cyan)
+            self.lbl_bot_status.configure(text=t["bot_starting"], text_color=self.neon_cyan)
             
             # Initialize CyberFaceBot
             from tg_bot import CyberFaceBot
@@ -1261,11 +1457,11 @@ class CyberFaceApp(ctk.CTk):
             success = self.bot_instance.start()
             if success:
                 self.bot_running = True
-                self.btn_toggle_bot.configure(text="STOP BOT", fg_color="#1a1e29", border_color=self.neon_magenta, hover_color="#ff3333")
-                self.lbl_bot_status.configure(text="BOT STATUS: ACTIVE", text_color=self.neon_green)
+                self.btn_toggle_bot.configure(text=t["stop_bot"], fg_color="#1a1e29", border_color=self.neon_magenta, hover_color="#ff3333")
+                self.lbl_bot_status.configure(text=t["bot_active"], text_color=self.neon_green)
                 self.log_to_console_on_gui("[GUI] Telegram bot started successfully.")
             else:
-                self.lbl_bot_status.configure(text="BOT STATUS: ERROR", text_color=self.neon_magenta)
+                self.lbl_bot_status.configure(text=t["bot_err"], text_color=self.neon_magenta)
                 self.bot_instance = None
 
     def log_to_console_on_gui(self, text):
