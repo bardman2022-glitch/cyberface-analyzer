@@ -123,7 +123,7 @@ class CyberFaceApp(ctk.CTk):
         # HUD Overlay Toggle Switch
         self.hud_switch = ctk.CTkSwitch(self.dash_frame, text="SHOW HUD MESH OVERLAY", 
                                         font=ctk.CTkFont(family="Consolas", size=10, weight="bold"),
-                                        text_color=self.neon_cyan, fg_color="transparent",
+                                        text_color=self.neon_cyan,
                                         progress_color=self.neon_cyan, command=self.on_hud_toggle)
         self.hud_switch.select() # Default to enabled
         self.hud_switch.place(x=20, y=130)
