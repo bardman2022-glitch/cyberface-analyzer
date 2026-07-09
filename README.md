@@ -20,8 +20,8 @@ Designed for local execution, it automatically downloads and optimizes its model
   - `7.0 - 7.9`: **Chadlite** (Purple)
   - `8.0+`: **Chad** (Neon Magenta)
 - **Deep Multi-Augment Inference (TTA)**: Test-Time Augmentation (6 configurations: mirror flips, scaling, lighting adjustments) for maximum stability and accuracy.
-- **Multiple Demographic Settings**: Includes youth and adult adjustments, as well as a **Strict Mode ("Абсолютная точность")** for raw, uncompromised calibration.
-- **Russified User Interface**: Beautiful dark-mode cyberpunk UI styled using CustomTkinter.
+- **Multiple Demographic Settings**: Includes youth and adult adjustments, as well as a **Strict Accuracy** mode for raw, uncompromised calibration.
+- **Cyberpunk User Interface**: Beautiful dark-mode cyberpunk UI styled in English using CustomTkinter.
 
 ---
 
