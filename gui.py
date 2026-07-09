@@ -222,6 +222,7 @@ class CyberFaceApp(ctk.CTk):
                                             placeholder_text="Enter Telegram Bot Token...", 
                                             show="*", font=ctk.CTkFont(family="Consolas", size=11))
         self.bot_token_entry.place(x=20, y=665)
+        self.bind_entry_shortcuts(self.bot_token_entry)
 
         self.btn_toggle_bot = ctk.CTkButton(self.dash_frame, text="START BOT", 
                                             fg_color="#1f2d3d", hover_color=self.neon_green, 
@@ -1236,6 +1237,73 @@ class CyberFaceApp(ctk.CTk):
         self.log_box.insert("end", f"{text}\n")
         self.log_box.see("end")
         self.log_box.configure(state="disabled")
+
+    def bind_entry_shortcuts(self, entry):
+        # Bind Paste
+        entry.bind("<Control-v>", lambda e: self.entry_paste(entry))
+        entry.bind("<Control-V>", lambda e: self.entry_paste(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_m>", lambda e: self.entry_paste(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_M>", lambda e: self.entry_paste(entry))
+        
+        # Bind Copy
+        entry.bind("<Control-c>", lambda e: self.entry_copy(entry))
+        entry.bind("<Control-C>", lambda e: self.entry_copy(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_es>", lambda e: self.entry_copy(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_ES>", lambda e: self.entry_copy(entry))
+
+        # Bind Select All
+        entry.bind("<Control-a>", lambda e: self.entry_select_all(entry))
+        entry.bind("<Control-A>", lambda e: self.entry_select_all(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_ef>", lambda e: self.entry_select_all(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_EF>", lambda e: self.entry_select_all(entry))
+
+        # Bind Cut
+        entry.bind("<Control-x>", lambda e: self.entry_cut(entry))
+        entry.bind("<Control-X>", lambda e: self.entry_cut(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_ch>", lambda e: self.entry_cut(entry))
+        entry.bind("<Control-KeyPress-Cyrillic_CH>", lambda e: self.entry_cut(entry))
+
+    def entry_paste(self, entry):
+        try:
+            text = entry.clipboard_get()
+            if entry.select_present():
+                entry.delete("sel.first", "sel.last")
+            entry.insert("insert", text)
+        except Exception:
+            pass
+        return "break"
+
+    def entry_copy(self, entry):
+        try:
+            if entry.select_present():
+                text = entry.get()
+                first = entry.index("sel.first")
+                last = entry.index("sel.last")
+                selected_text = text[first:last]
+                entry.clipboard_clear()
+                entry.clipboard_append(selected_text)
+        except Exception:
+            pass
+        return "break"
+
+    def entry_select_all(self, entry):
+        entry.select_range(0, "end")
+        entry.icursor("end")
+        return "break"
+
+    def entry_cut(self, entry):
+        try:
+            if entry.select_present():
+                text = entry.get()
+                first = entry.index("sel.first")
+                last = entry.index("sel.last")
+                selected_text = text[first:last]
+                entry.clipboard_clear()
+                entry.clipboard_append(selected_text)
+                entry.delete("sel.first", "sel.last")
+        except Exception:
+            pass
+        return "break"
 
     def destroy(self):
         if self.cap is not None:
