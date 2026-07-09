@@ -144,6 +144,9 @@ class CyberFaceApp(ctk.CTk):
         # Select initial slot in Photo tab to initialize visual highlights
         self.select_photo_slot("Frontal")
 
+        # Load config from file
+        self.load_config()
+
     def create_widgets(self):
         # ------------------- Left Column: CTkTabview -------------------
         self.tabview = ctk.CTkTabview(self, width=640, height=675, fg_color=self.bg_color, 
@@ -546,6 +549,18 @@ class CyberFaceApp(ctk.CTk):
         self.bot_token_entry.place(x=20, y=115)
         self.bind_entry_shortcuts(self.bot_token_entry)
 
+        # Context menu for token entry
+        import tkinter as tk
+        self.token_menu = tk.Menu(self, tearoff=0, bg="#121824", fg="#00f0ff", activebackground="#1f2d3d", activeforeground="#ffffff", bd=1)
+        self.token_menu.add_command(label="Paste / Вставить", command=lambda: self.entry_paste(self.bot_token_entry))
+        self.token_menu.add_command(label="Copy / Копировать", command=lambda: self.entry_copy(self.bot_token_entry))
+        self.token_menu.add_command(label="Cut / Вырезать", command=lambda: self.entry_cut(self.bot_token_entry))
+        self.token_menu.add_command(label="Select All / Выделить всё", command=lambda: self.entry_select_all(self.bot_token_entry))
+        
+        self.bot_token_entry.bind("<Button-3>", self.show_token_context_menu)
+        if hasattr(self.bot_token_entry, "_entry"):
+            self.bot_token_entry._entry.bind("<Button-3>", self.show_token_context_menu)
+
         self.btn_toggle_bot = ctk.CTkButton(self.tab_config, text="START BOT", 
                                             fg_color="#1f2d3d", hover_color=self.neon_green, 
                                             border_width=1, border_color=self.neon_green,
@@ -588,6 +603,7 @@ class CyberFaceApp(ctk.CTk):
     def on_lang_changed(self, event=None):
         lang = self.lang_combobox.get()
         self.apply_language(lang)
+        self.save_config()
 
     def apply_language(self, lang):
         t = TRANSLATIONS[lang]
@@ -1465,6 +1481,7 @@ class CyberFaceApp(ctk.CTk):
                 self.btn_toggle_bot.configure(text=t["stop_bot"], fg_color="#1a1e29", border_color=self.neon_magenta, hover_color="#ff3333")
                 self.lbl_bot_status.configure(text=t["bot_active"], text_color=self.neon_green)
                 self.log_to_console_on_gui("[GUI] Telegram bot started successfully.")
+                self.save_config()
             else:
                 self.lbl_bot_status.configure(text=t["bot_err"], text_color=self.neon_magenta)
                 self.bot_instance = None
@@ -1548,6 +1565,44 @@ class CyberFaceApp(ctk.CTk):
                 self.log_to_console_on_gui(f"[GUI] Error reading SSH key: {e}")
         else:
             self.log_to_console_on_gui("[GUI] SSH public key not found. Start the bot first to generate it.")
+
+    def load_config(self):
+        import json
+        config_path = "config.json"
+        if os.path.exists(config_path):
+            try:
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+                
+                # Apply token
+                token = config.get("bot_token", "")
+                if token:
+                    self.bot_token_entry.insert(0, token)
+                
+                # Apply language
+                lang = config.get("language", "English")
+                self.lang_combobox.set(lang)
+                self.apply_language(lang)
+            except Exception as e:
+                print(f"Error loading config: {e}")
+
+    def save_config(self):
+        import json
+        config = {
+            "bot_token": self.bot_token_entry.get().strip(),
+            "language": self.lang_combobox.get()
+        }
+        try:
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(config, f, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"Error saving config: {e}")
+
+    def show_token_context_menu(self, event):
+        try:
+            self.token_menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            self.token_menu.grab_release()
 
     def destroy(self):
         if self.cap is not None:
