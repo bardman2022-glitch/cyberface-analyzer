@@ -4,6 +4,17 @@
 
 Designed for local execution, it automatically downloads and optimizes its models on launch without sending any data to the cloud.
 
+## Screenshots 📸
+
+![Real-time Scanner](screenshots/screenshot_1.png)
+*Real-time scanning and facial landmark geometry assessment.*
+
+![Photo Rating & Analysis](screenshots/screenshot_2.png)
+*Photo rating slots with individual posture tracking.*
+
+![Combined Diagnostics Report](screenshots/screenshot_3.png)
+*Detailed Looksmaxxing telemetry report and suggestions.*
+
 ---
 
 ## Key Features 🚀
