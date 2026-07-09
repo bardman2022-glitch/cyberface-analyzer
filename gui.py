@@ -1239,29 +1239,36 @@ class CyberFaceApp(ctk.CTk):
         self.log_box.configure(state="disabled")
 
     def bind_entry_shortcuts(self, entry):
-        # Bind Paste
+        # Bind standard English
         entry.bind("<Control-v>", lambda e: self.entry_paste(entry))
         entry.bind("<Control-V>", lambda e: self.entry_paste(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_m>", lambda e: self.entry_paste(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_M>", lambda e: self.entry_paste(entry))
-        
-        # Bind Copy
         entry.bind("<Control-c>", lambda e: self.entry_copy(entry))
         entry.bind("<Control-C>", lambda e: self.entry_copy(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_es>", lambda e: self.entry_copy(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_ES>", lambda e: self.entry_copy(entry))
-
-        # Bind Select All
         entry.bind("<Control-a>", lambda e: self.entry_select_all(entry))
         entry.bind("<Control-A>", lambda e: self.entry_select_all(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_ef>", lambda e: self.entry_select_all(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_EF>", lambda e: self.entry_select_all(entry))
-
-        # Bind Cut
         entry.bind("<Control-x>", lambda e: self.entry_cut(entry))
         entry.bind("<Control-X>", lambda e: self.entry_cut(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_ch>", lambda e: self.entry_cut(entry))
-        entry.bind("<Control-KeyPress-Cyrillic_CH>", lambda e: self.entry_cut(entry))
+
+        # Cyrillic bindings (wrapped in try-except to prevent bad keysym TclError crashes)
+        cyrillic_bindings = [
+            ("Cyrillic_m", self.entry_paste),
+            ("Cyrillic_M", self.entry_paste),
+            ("Cyrillic_es", self.entry_copy),
+            ("Cyrillic_ES", self.entry_copy),
+            ("Cyrillic_ef", self.entry_select_all),
+            ("Cyrillic_EF", self.entry_select_all),
+            ("Cyrillic_ch", self.entry_cut),
+            ("Cyrillic_CH", self.entry_cut),
+        ]
+        for keysym, func in cyrillic_bindings:
+            try:
+                entry.bind(f"<Control-KeyPress-{keysym}>", lambda e, f=func: f(entry))
+            except Exception:
+                pass
+            try:
+                entry.bind(f"<Control-{keysym}>", lambda e, f=func: f(entry))
+            except Exception:
+                pass
 
     def entry_paste(self, entry):
         try:
