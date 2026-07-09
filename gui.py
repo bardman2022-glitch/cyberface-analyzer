@@ -16,7 +16,7 @@ class CyberFaceApp(ctk.CTk):
 
         # Window configuration
         self.title("CYBERFACE ANALYZER // HYBRID GEOMETRIC & NEURAL HUD")
-        self.geometry("1100x700")
+        self.geometry("1100x800")
         self.resizable(False, False)
 
         # Set theme and color options
@@ -36,6 +36,10 @@ class CyberFaceApp(ctk.CTk):
         # Initialize engines
         self.analyzer = FaceGeometryAnalyzer()
         self.predictor = BeautyPredictor()
+
+        # Telegram Bot state
+        self.bot_instance = None
+        self.bot_running = False
 
         # Webcam & State variables
         self.cap = None
@@ -93,7 +97,7 @@ class CyberFaceApp(ctk.CTk):
         self.setup_photo_tab()
 
         # ------------------- Right Column: Dashboard -------------------
-        self.dash_frame = ctk.CTkFrame(self, width=400, height=650, fg_color=self.card_color, border_width=1, border_color="#1f293d")
+        self.dash_frame = ctk.CTkFrame(self, width=400, height=750, fg_color=self.card_color, border_width=1, border_color="#1f293d")
         self.dash_frame.place(x=680, y=20)
 
         # Header Title
@@ -207,6 +211,29 @@ class CyberFaceApp(ctk.CTk):
         self.log_box.place(x=20, y=450)
         self.log_box.insert("0.0", "Waiting for face detection...\n")
         self.log_box.configure(state="disabled")
+
+        # Section 4: Telegram Bot Integration
+        self.bot_section_label = ctk.CTkLabel(self.dash_frame, text="=== TELEGRAM BOT INTEGRATION ===", 
+                                              font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
+                                              text_color=self.neon_magenta)
+        self.bot_section_label.place(x=20, y=640)
+
+        self.bot_token_entry = ctk.CTkEntry(self.dash_frame, width=250, height=30, 
+                                            placeholder_text="Enter Telegram Bot Token...", 
+                                            show="*", font=ctk.CTkFont(family="Consolas", size=11))
+        self.bot_token_entry.place(x=20, y=665)
+
+        self.btn_toggle_bot = ctk.CTkButton(self.dash_frame, text="START BOT", 
+                                            fg_color="#1f2d3d", hover_color=self.neon_green, 
+                                            border_width=1, border_color=self.neon_green,
+                                            text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
+                                            width=100, height=30, command=self.toggle_telegram_bot)
+        self.btn_toggle_bot.place(x=280, y=665)
+
+        self.lbl_bot_status = ctk.CTkLabel(self.dash_frame, text="BOT STATUS: INACTIVE", 
+                                           font=ctk.CTkFont(family="Consolas", size=10, weight="bold"), 
+                                           text_color=self.text_muted)
+        self.lbl_bot_status.place(x=20, y=705)
 
     # ------------------- Tab 1: Real-time Scan Layout -------------------
     def setup_realtime_tab(self):
@@ -1165,7 +1192,54 @@ class CyberFaceApp(ctk.CTk):
         self.video_label.configure(image=ctk_img, text="")
         self.video_label.image = ctk_img
 
+    def toggle_telegram_bot(self):
+        if self.bot_running:
+            self.bot_running = False
+            if self.bot_instance:
+                self.bot_instance.stop()
+                self.bot_instance = None
+            self.btn_toggle_bot.configure(text="START BOT", fg_color="#1f2d3d", border_color=self.neon_green, hover_color=self.neon_green)
+            self.lbl_bot_status.configure(text="BOT STATUS: INACTIVE", text_color=self.text_muted)
+            self.log_to_console_on_gui("[GUI] Telegram bot stopped.")
+        else:
+            token = self.bot_token_entry.get().strip()
+            if not token:
+                self.lbl_bot_status.configure(text="BOT STATUS: ERROR (NO TOKEN)", text_color=self.neon_magenta)
+                return
+                
+            self.lbl_bot_status.configure(text="BOT STATUS: STARTING...", text_color=self.neon_cyan)
+            
+            # Initialize CyberFaceBot
+            from tg_bot import CyberFaceBot
+            self.bot_instance = CyberFaceBot(
+                token=token, 
+                analyzer=self.analyzer, 
+                predictor=self.predictor, 
+                on_log_callback=self.log_to_console_on_gui
+            )
+            
+            success = self.bot_instance.start()
+            if success:
+                self.bot_running = True
+                self.btn_toggle_bot.configure(text="STOP BOT", fg_color="#1a1e29", border_color=self.neon_magenta, hover_color="#ff3333")
+                self.lbl_bot_status.configure(text="BOT STATUS: ACTIVE", text_color=self.neon_green)
+                self.log_to_console_on_gui("[GUI] Telegram bot started successfully.")
+            else:
+                self.lbl_bot_status.configure(text="BOT STATUS: ERROR", text_color=self.neon_magenta)
+                self.bot_instance = None
+
+    def log_to_console_on_gui(self, text):
+        self.after(10, lambda: self._safe_log_to_gui(text))
+
+    def _safe_log_to_gui(self, text):
+        self.log_box.configure(state="normal")
+        self.log_box.insert("end", f"{text}\n")
+        self.log_box.see("end")
+        self.log_box.configure(state="disabled")
+
     def destroy(self):
         if self.cap is not None:
             self.cap.release()
+        if self.bot_running and self.bot_instance:
+            self.bot_instance.stop()
         super().destroy()
