@@ -2,6 +2,7 @@ import os
 import threading
 import time
 import math
+import subprocess
 import cv2
 import numpy as np
 from PIL import Image
@@ -19,6 +20,14 @@ class CyberFaceBot:
         self.thread = None
         self.is_running = False
         
+        # FastAPI backend uvicorn thread
+        self.server_thread = None
+        
+        # SSH Tunnel subprocess
+        self.tunnel_process = None
+        self.tunnel_thread = None
+        self.tunnel_url = None
+        
         # User configurations (chat_id -> target_group)
         self.user_groups = {}
 
@@ -33,31 +42,96 @@ class CyberFaceBot:
             return False
             
         try:
+            # 1. Start FastAPI Backend
+            self.start_backend()
+            
+            # 2. Establish SSH Tunnel
+            self.start_tunnel()
+            
+            # 3. Start Telebot Instance
             self.bot = telebot.TeleBot(self.token, threaded=False)
             self.register_handlers()
             self.is_running = True
             
-            # Start polling in a separate background thread
+            # Start Telegram Bot Polling in a background thread
             self.thread = threading.Thread(target=self.poll_loop, daemon=True)
             self.thread.start()
             self.log("Bot started successfully and polling.")
             return True
         except Exception as e:
             self.log(f"Error starting bot: {e}")
-            self.is_running = False
+            self.stop()
             return False
+
+    def start_backend(self):
+        # Inject models into tma_backend
+        import tma_backend
+        tma_backend.analyzer = self.analyzer
+        tma_backend.predictor = self.predictor
+        
+        import uvicorn
+        self.server_thread = threading.Thread(
+            target=lambda: uvicorn.run(tma_backend.app, host="127.0.0.1", port=23789, log_level="warning"),
+            daemon=True
+        )
+        self.server_thread.start()
+        self.log("FastAPI backend server started on localhost:23789.")
+
+    def start_tunnel(self):
+        self.log("Starting SSH tunnel to localhost.run...")
+        try:
+            self.tunnel_process = subprocess.Popen(
+                ["ssh", "-o", "StrictHostKeyChecking=no", "-R", "80:127.0.0.1:23789", "nokey@localhost.run"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
+            
+            def read_stdout():
+                for line in iter(self.tunnel_process.stdout.readline, ""):
+                    if not self.is_running:
+                        break
+                    # Look for URL
+                    if "https://" in line:
+                        parts = line.split("https://")
+                        if len(parts) > 1:
+                            url = "https://" + parts[1].strip().split(" ")[0].split("\n")[0]
+                            self.tunnel_url = url
+                            self.log(f"Public HTTPS Tunnel established: {self.tunnel_url}")
+                    # Pipe line to console if needed
+                    # self.log(f"Tunnel Log: {line.strip()}")
+                    
+            self.tunnel_thread = threading.Thread(target=read_stdout, daemon=True)
+            self.tunnel_thread.start()
+        except Exception as e:
+            self.log(f"Failed to start SSH tunnel: {e}")
 
     def stop(self):
         if not self.is_running:
             return
             
         self.is_running = False
+        
+        # 1. Stop Telegram bot polling
         if self.bot:
             try:
                 self.bot.stop_polling()
             except Exception as e:
                 self.log(f"Error stopping polling: {e}")
-        self.log("Bot stopped.")
+                
+        # 2. Terminate SSH tunnel process
+        if self.tunnel_process:
+            try:
+                self.tunnel_process.terminate()
+                self.tunnel_process.wait(timeout=2)
+                self.log("SSH Tunnel process terminated.")
+            except Exception as e:
+                self.log(f"Error terminating SSH Tunnel: {e}")
+            self.tunnel_process = None
+            
+        self.tunnel_url = None
+        self.log("Bot and services stopped.")
 
     def poll_loop(self):
         while self.is_running:
@@ -73,10 +147,18 @@ class CyberFaceBot:
             chat_id = message.chat.id
             self.user_groups[chat_id] = "Universal"
             
+            # Wait briefly if tunnel is still establishing
+            retries = 3
+            while not self.tunnel_url and retries > 0:
+                time.sleep(1.0)
+                retries -= 1
+                
             welcome_text = (
                 "🤖 *Welcome to CyberFace Analyzer Bot!*\n\n"
                 "Send me a selfie or portrait photo, and I will analyze your face geometry, "
                 "symmetry, and calculate an AI beauty rating based on our deep neural networks.\n\n"
+                "⚡ *Telegram Mini App is now active!* Tap the button below to open the interactive interface, "
+                "upload multiple photos, and compile a weighted looksmaxxing certificate!\n\n"
                 "Current calibration: *Universal*\n\n"
                 "Use the buttons below to change target calibration group:"
             )
@@ -90,7 +172,6 @@ class CyberFaceBot:
             group = call.data.split("setgroup_")[1]
             self.user_groups[chat_id] = group
             
-            # Edit welcome/status message
             self.bot.answer_callback_query(call.id, f"Group set to {group}")
             self.bot.send_message(chat_id, f"🎯 Calibration target changed to *{group}*.\nSend a photo to begin rating!", parse_mode="Markdown")
 
@@ -168,6 +249,9 @@ class CyberFaceBot:
 
     def create_group_markup(self):
         markup = InlineKeyboardMarkup()
+        if self.tunnel_url:
+            markup.row(InlineKeyboardButton("💻 OPEN MINI APP", web_app=telebot.types.WebAppInfo(url=self.tunnel_url)))
+            
         btn1 = InlineKeyboardButton("Universal", callback_data="setgroup_Universal")
         btn2 = InlineKeyboardButton("Strict Accuracy", callback_data="setgroup_Strict")
         btn3 = InlineKeyboardButton("Young Man (14-20)", callback_data="setgroup_Young Man")
@@ -228,7 +312,6 @@ class CyberFaceBot:
             f"💡 *LOOKSMAXXING SUGGESTIONS:*\n"
         )
         
-        # Suggestions list
         sugs = []
         if sym < 90.0:
             sugs.append("* Balance chewing side & sleep posture.")
