@@ -781,20 +781,21 @@ class CyberFaceApp(ctk.CTk):
 
     def update_button_states_for_slot(self, pose, score):
         tier_text, tier_color = self.get_tier_info(score)
+        score_str = f"{score:.2f}" if score is not None else "0.00"
         
         buttons_rt = {
-            "Frontal": (self.btn_rt_frontal, f"⬢ Frontal ({score:.2f})"),
-            "Left Semi-profile": (self.btn_rt_lsemi, f"⬢ L.Semi ({score:.2f})"),
-            "Right Semi-profile": (self.btn_rt_rsemi, f"⬢ R.Semi ({score:.2f})"),
-            "Left Profile": (self.btn_rt_lprof, f"⬢ L.Profile ({score:.2f})"),
-            "Right Profile": (self.btn_rt_rprof, f"⬢ R.Profile ({score:.2f})")
+            "Frontal": (self.btn_rt_frontal, f"⬢ Frontal ({score_str})"),
+            "Left Semi-profile": (self.btn_rt_lsemi, f"⬢ L.Semi ({score_str})"),
+            "Right Semi-profile": (self.btn_rt_rsemi, f"⬢ R.Semi ({score_str})"),
+            "Left Profile": (self.btn_rt_lprof, f"⬢ L.Profile ({score_str})"),
+            "Right Profile": (self.btn_rt_rprof, f"⬢ R.Profile ({score_str})")
         }
         buttons_ph = {
-            "Frontal": (self.btn_ph_frontal, f"⬢ Slot 1: Frontal ({score:.2f})"),
-            "Left Semi-profile": (self.btn_ph_lsemi, f"⬢ Slot 2: L. Semi-profile ({score:.2f})"),
-            "Right Semi-profile": (self.btn_ph_rsemi, f"⬢ Slot 3: R. Semi-profile ({score:.2f})"),
-            "Left Profile": (self.btn_ph_lprof, f"⬢ Slot 4: L. Profile ({score:.2f})"),
-            "Right Profile": (self.btn_ph_rprof, f"⬢ Slot 5: R. Profile ({score:.2f})")
+            "Frontal": (self.btn_ph_frontal, f"⬢ Slot 1: Frontal ({score_str})"),
+            "Left Semi-profile": (self.btn_ph_lsemi, f"⬢ Slot 2: L. Semi-profile ({score_str})"),
+            "Right Semi-profile": (self.btn_ph_rsemi, f"⬢ Slot 3: R. Semi-profile ({score_str})"),
+            "Left Profile": (self.btn_ph_lprof, f"⬢ Slot 4: L. Profile ({score_str})"),
+            "Right Profile": (self.btn_ph_rprof, f"⬢ Slot 5: R. Profile ({score_str})")
         }
 
         # Update RT
@@ -889,8 +890,13 @@ class CyberFaceApp(ctk.CTk):
 
         active_slots = {}
         for k in self.slots:
-            if self.slots[k] is not None:
+            if self.slots[k] is not None and self.slots[k].get("score") is not None:
                 active_slots[k] = self.slots[k]
+
+        if "Frontal" not in active_slots:
+            self.status_label_rt.configure(text="ERROR: FRONTAL SLOT REQUIRED FOR COMBINED CALCULATION", text_color=self.neon_magenta)
+            self.deep_status_lbl.configure(text="Error: Frontal slot is empty or not rated.")
+            return
 
         # Weights allocation
         weights = {"Frontal": 0.40}
@@ -905,9 +911,9 @@ class CyberFaceApp(ctk.CTk):
             weights["Frontal"] = 1.0
 
         ai_score = sum(active_slots[k]["score"] * weights[k] for k in active_slots)
-        geom_score = sum(active_slots[k]["geom_score"] * weights[k] for k in active_slots)
-        symmetry = frontal["symmetry"]
-        golden_ratio = sum(active_slots[k]["golden_ratio"] * weights[k] for k in active_slots)
+        geom_score = sum((active_slots[k]["geom_score"] or 0.0) * weights[k] for k in active_slots)
+        symmetry = active_slots["Frontal"]["symmetry"] or 0.0
+        golden_ratio = sum((active_slots[k]["golden_ratio"] or 0.0) * weights[k] for k in active_slots)
 
         # Potential calculation
         geom_factor = geom_score / 100.0
