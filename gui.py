@@ -1516,26 +1516,13 @@ class CyberFaceApp(ctk.CTk):
                     pass
 
     def entry_paste(self, entry):
-        try:
-            text = entry.clipboard_get()
-            if entry.select_present():
-                entry.delete("sel.first", "sel.last")
-            entry.insert("insert", text)
-        except Exception:
-            pass
+        widget = entry._entry if hasattr(entry, "_entry") else entry
+        widget.event_generate("<<Paste>>")
         return "break"
 
     def entry_copy(self, entry):
-        try:
-            if entry.select_present():
-                text = entry.get()
-                first = entry.index("sel.first")
-                last = entry.index("sel.last")
-                selected_text = text[first:last]
-                entry.clipboard_clear()
-                entry.clipboard_append(selected_text)
-        except Exception:
-            pass
+        widget = entry._entry if hasattr(entry, "_entry") else entry
+        widget.event_generate("<<Copy>>")
         return "break"
 
     def entry_select_all(self, entry):
@@ -1544,17 +1531,8 @@ class CyberFaceApp(ctk.CTk):
         return "break"
 
     def entry_cut(self, entry):
-        try:
-            if entry.select_present():
-                text = entry.get()
-                first = entry.index("sel.first")
-                last = entry.index("sel.last")
-                selected_text = text[first:last]
-                entry.clipboard_clear()
-                entry.clipboard_append(selected_text)
-                entry.delete("sel.first", "sel.last")
-        except Exception:
-            pass
+        widget = entry._entry if hasattr(entry, "_entry") else entry
+        widget.event_generate("<<Cut>>")
         return "break"
 
     def copy_ssh_key_to_clipboard(self):
