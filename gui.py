@@ -146,6 +146,11 @@ class CyberFaceApp(ctk.CTk):
                                              text_color=self.text_muted)
         self.score_desc_label.place(x=20, y=235)
 
+        self.potential_label = ctk.CTkLabel(self.dash_frame, text="POTENTIAL: --.--", 
+                                             font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
+                                             text_color=self.text_muted)
+        self.potential_label.place(x=20, y=215)
+
         # Section 2: Geometric Metrics
         self.geom_section_label = ctk.CTkLabel(self.dash_frame, text="=== GEOMETRIC SYMMETRY HUD ===", 
                                                font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
@@ -891,12 +896,18 @@ class CyberFaceApp(ctk.CTk):
         symmetry = frontal["symmetry"]
         golden_ratio = sum(active_slots[k]["golden_ratio"] * weights[k] for k in active_slots)
 
+        # Potential calculation
+        geom_factor = geom_score / 100.0
+        potential_gain = (10.0 - ai_score) * (0.20 + 0.25 * geom_factor)
+        potential_score = min(10.0, ai_score + potential_gain)
+
         # Update HUD Display with Consolidated Score
         self.score_label.configure(text=f"{ai_score:.2f} / 10.0", text_color=self.neon_green)
         tier_text, tier_color = self.get_tier_info(ai_score)
         self.tier_label.configure(text=tier_text, text_color=tier_color)
         top_pct = self.get_percentile_value(ai_score)
         self.percentile_label.configure(text=f"TOP: {top_pct:.1f}%", text_color=tier_color)
+        self.potential_label.configure(text=f"POTENTIAL: {potential_score:.2f} / 10.0", text_color=self.neon_green)
         self.lbl_sym.configure(text=f"Combined Symmetry: {symmetry:.1f}%")
         self.pb_sym.set(symmetry / 100.0)
         self.lbl_gr.configure(text=f"Combined Golden Ratio: {golden_ratio:.1f}%")
@@ -909,6 +920,7 @@ class CyberFaceApp(ctk.CTk):
         report.append("=== COMBINED CYBER-CERTIFICATE ===")
         report.append(f"Group: {self.group_combobox.get()}")
         report.append(f"Combined AI Rating: {ai_score:.2f}/10.0 (TOP: {top_pct:.1f}% of population)")
+        report.append(f"Optimized Potential: {potential_score:.2f}/10.0")
         report.append(f"Combined Geometry: {geom_score:.1f}%")
         report.append("-" * 32)
         
@@ -926,6 +938,38 @@ class CyberFaceApp(ctk.CTk):
             verdict = "Pronounced asymmetry of contours. Specific facial relief."
             
         report.append(f"AI VERDICT: {verdict}")
+        
+        # Tailored improvement suggestions based on metrics
+        report.append("-" * 32)
+        report.append("=== IMPROVEMENT SUGGESTIONS ===")
+        
+        suggestions = []
+        if symmetry < 90.0:
+            suggestions.append("* Low symmetry: sleep on back, balance chewing on both sides.")
+        
+        for slot_name, slot_data in active_slots.items():
+            for detail in slot_data.get("details", []):
+                if "Match:" in detail:
+                    try:
+                        pct_str = detail.split("Match:")[1].split("%")[0].strip()
+                        pct = float(pct_str)
+                        if pct < 85.0:
+                            if "Jaw" in detail and "* Reduce face bloat (body fat %) to define jawline." not in suggestions:
+                                suggestions.append("* Reduce face bloat (body fat %) to define jawline.")
+                            elif "Nose" in detail and "* Nose proportions off; groom eyebrows to balance spacing." not in suggestions:
+                                suggestions.append("* Nose proportions off; groom eyebrows to balance spacing.")
+                            elif "Height/Width" in detail and "* Head proportions: style hair with side volume/length." not in suggestions:
+                                suggestions.append("* Head proportions: style hair with side volume/length.")
+                    except Exception:
+                        pass
+                        
+        if ai_score < 6.5:
+            suggestions.append("* Skin & Styling: improve skin health, styling, and hair texture.")
+            
+        if not suggestions:
+            suggestions.append("* Core geometry is optimized. Keep up current maintenance.")
+            
+        report.extend(suggestions)
 
         # Write logs
         self.log_box.configure(state="normal")
@@ -962,6 +1006,7 @@ class CyberFaceApp(ctk.CTk):
         self.photo_preview_label.configure(image=self.empty_ctk_img, text="NO PHOTO\n\nUpload photo for selected slot")
         self.tier_label.configure(text="", text_color=self.text_muted)
         self.percentile_label.configure(text="", text_color=self.text_muted)
+        self.potential_label.configure(text="POTENTIAL: --.--", text_color=self.text_muted)
         self.deep_pb.set(0)
         self.deep_status_lbl.configure(text="Waiting for photo uploads...")
 
@@ -1013,10 +1058,18 @@ class CyberFaceApp(ctk.CTk):
                 self.tier_label.configure(text=tier_text, text_color=tier_color)
                 top_pct = self.get_percentile_value(metrics['ai_score'])
                 self.percentile_label.configure(text=f"TOP: {top_pct:.1f}%", text_color=tier_color)
+                
+                # Potential calculation
+                overall_geom = metrics.get("overall_geom", 70.0)
+                geom_factor = overall_geom / 100.0
+                potential_gain = (10.0 - metrics['ai_score']) * (0.20 + 0.25 * geom_factor)
+                potential_score = min(10.0, metrics['ai_score'] + potential_gain)
+                self.potential_label.configure(text=f"POTENTIAL: {potential_score:.2f} / 10.0", text_color=self.neon_cyan)
             else:
                 self.score_label.configure(text="LOADING...", text_color=self.neon_magenta)
                 self.tier_label.configure(text="", text_color=self.text_muted)
                 self.percentile_label.configure(text="", text_color=self.text_muted)
+                self.potential_label.configure(text="POTENTIAL: LOADING...", text_color=self.text_muted)
             
             # Progress bars update
             self.lbl_sym.configure(text=f"Facial Symmetry: {metrics['symmetry']}%")
@@ -1034,17 +1087,46 @@ class CyberFaceApp(ctk.CTk):
             
             if "ai_score" in metrics:
                 self.log_box.insert("end", f"> [AI SCORE] Attractiveness: {metrics['ai_score']}/10.0\n")
+                self.log_box.insert("end", f"> [POTENTIAL] Optimized: {potential_score:.2f}/10.0\n")
                 self.log_box.insert("end", f"> [CLIP RAW] Aesthetic Index: {metrics['raw_score']}\n")
                 self.log_box.insert("end", "-" * 38 + "\n")
                 
             self.log_box.insert("end", "> [GEOMETRY] Analysis summary:\n")
             for detail in metrics["details"]:
                 self.log_box.insert("end", f"* {detail}\n")
+                
+            # Quick suggestions in real-time scan
+            if "ai_score" in metrics:
+                self.log_box.insert("end", "-" * 38 + "\n")
+                self.log_box.insert("end", "> [SUGGESTIONS] Looksmaxxing:\n")
+                sugs = []
+                if metrics["symmetry"] < 90.0:
+                    sugs.append("* Balance chewing side & sleep posture")
+                for d in metrics["details"]:
+                    if "Match:" in d:
+                        try:
+                            val = float(d.split("Match:")[1].split("%")[0].strip())
+                            if val < 85.0:
+                                if "Jaw" in d:
+                                    sugs.append("* Lower body fat % to define jawline")
+                                elif "Nose" in d:
+                                    sugs.append("* Groom eyebrows to balance facial ratios")
+                        except Exception:
+                            pass
+                if metrics["ai_score"] < 6.5:
+                    sugs.append("* Optimize skin hygiene & hair texture")
+                
+                if not sugs:
+                    sugs.append("* Core geometry is optimized")
+                for s in sugs[:2]: # Max 2 suggestions in real-time to save space
+                    self.log_box.insert("end", f"{s}\n")
+                    
             self.log_box.configure(state="disabled")
         else:
             self.score_label.configure(text="--.-- / 10.0", text_color=self.text_muted)
             self.tier_label.configure(text="", text_color=self.text_muted)
             self.percentile_label.configure(text="", text_color=self.text_muted)
+            self.potential_label.configure(text="POTENTIAL: --.--", text_color=self.text_muted)
             self.lbl_sym.configure(text="Facial Symmetry: --%")
             self.pb_sym.set(0)
             self.lbl_gr.configure(text="Golden Ratio (1.618): --%")

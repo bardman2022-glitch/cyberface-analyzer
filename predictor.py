@@ -222,12 +222,12 @@ class BeautyPredictor:
             ]
 
             steps = [
-                "Выравнивание сетки лица...",
-                "Генерация отраженных аугментаций (TTA)...",
-                "Масштабирование текстуры (0.9x - 1.1x)...",
-                "Компенсация экспозиции и света...",
-                "Извлечение признаков CLIP Vision...",
-                "Эстетическая классификация MLP..."
+                "Aligning facial landmark mesh...",
+                "Generating mirrored augmentations (TTA)...",
+                "Scaling texture representations (0.9x - 1.1x)...",
+                "Compensating exposure and illumination...",
+                "Extracting CLIP Vision features...",
+                "Classifying aesthetics via MLP..."
             ]
 
             for i, transform_fn in enumerate(transform_variants):
@@ -247,7 +247,7 @@ class BeautyPredictor:
                 time.sleep(0.25)
                 
             if progress_callback:
-                progress_callback(1.0, "Глубокий анализ завершен!")
+                progress_callback(1.0, "Deep analysis completed!")
                 
             if not scores:
                 return None, None
