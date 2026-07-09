@@ -4,8 +4,6 @@
 
 Designed for local execution, it automatically downloads and optimizes its models on launch without sending any data to the cloud.
 
-![CyberFace Analyzer HUD](screenshot.png)
-
 ---
 
 ## Key Features 🚀
