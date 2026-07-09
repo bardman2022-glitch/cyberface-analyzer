@@ -236,6 +236,13 @@ class CyberFaceApp(ctk.CTk):
                                            text_color=self.text_muted)
         self.lbl_bot_status.place(x=20, y=705)
 
+        self.btn_copy_ssh = ctk.CTkButton(self.dash_frame, text="🔑 COPY SSH KEY", 
+                                          fg_color="#101520", hover_color="#1f2d3d",
+                                          text_color=self.neon_cyan, border_width=1, border_color=self.neon_cyan,
+                                          font=ctk.CTkFont(family="Consolas", size=10, weight="bold"),
+                                          width=110, height=22, command=self.copy_ssh_key_to_clipboard)
+        self.btn_copy_ssh.place(x=270, y=705)
+
     # ------------------- Tab 1: Real-time Scan Layout -------------------
     def setup_realtime_tab(self):
         # Video Frame inside tab
@@ -1208,6 +1215,38 @@ class CyberFaceApp(ctk.CTk):
                 self.lbl_bot_status.configure(text="BOT STATUS: ERROR (NO TOKEN)", text_color=self.neon_magenta)
                 return
                 
+            # Ensure SSH key exists (prompt user if missing)
+            ssh_key_path = os.path.expanduser("~/.ssh/id_rsa")
+            if not os.path.exists(ssh_key_path):
+                from tkinter import messagebox
+                ans = messagebox.askyesno(
+                    "SSH Key Required",
+                    "An SSH keypair is required to connect the Telegram Mini App secure tunnel.\n\n"
+                    "Would you like to automatically generate a secure SSH key now?"
+                )
+                if ans:
+                    self.log_to_console_on_gui("[GUI] Generating secure SSH keypair...")
+                    ssh_dir = os.path.dirname(ssh_key_path)
+                    if not os.path.exists(ssh_dir):
+                        os.makedirs(ssh_dir)
+                    try:
+                        import subprocess
+                        subprocess.run(
+                            ["ssh-keygen", "-t", "rsa", "-b", "2048", "-N", "", "-f", ssh_key_path],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            check=True
+                        )
+                        self.log_to_console_on_gui("[GUI] SSH keypair generated successfully.")
+                    except Exception as e:
+                        self.log_to_console_on_gui(f"[GUI] Error generating SSH key: {e}")
+                        self.lbl_bot_status.configure(text="BOT STATUS: ERROR (SSH KEY)", text_color=self.neon_magenta)
+                        return
+                else:
+                    self.log_to_console_on_gui("[GUI] SSH key generation cancelled. Tunnel will not connect.")
+                    self.lbl_bot_status.configure(text="BOT STATUS: ERROR (NO SSH KEY)", text_color=self.neon_magenta)
+                    return
+
             self.lbl_bot_status.configure(text="BOT STATUS: STARTING...", text_color=self.neon_cyan)
             
             # Initialize CyberFaceBot
@@ -1311,6 +1350,20 @@ class CyberFaceApp(ctk.CTk):
         except Exception:
             pass
         return "break"
+
+    def copy_ssh_key_to_clipboard(self):
+        ssh_key_path = os.path.expanduser("~/.ssh/id_rsa.pub")
+        if os.path.exists(ssh_key_path):
+            try:
+                with open(ssh_key_path, "r", encoding="utf-8") as f:
+                    pub_key = f.read().strip()
+                self.clipboard_clear()
+                self.clipboard_append(pub_key)
+                self.log_to_console_on_gui("[GUI] Public SSH key copied to clipboard!")
+            except Exception as e:
+                self.log_to_console_on_gui(f"[GUI] Error reading SSH key: {e}")
+        else:
+            self.log_to_console_on_gui("[GUI] SSH public key not found. Start the bot first to generate it.")
 
     def destroy(self):
         if self.cap is not None:
