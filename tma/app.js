@@ -353,13 +353,15 @@ function displayDeepResults(res) {
 
 // --- Help functions ---
 function getTierText(score) {
+  const group = document.getElementById('group-select').value;
+  const isFemale = group.includes("Woman");
   if (score < 3.0) return "SUB-3";
   if (score < 4.0) return "SUB";
-  if (score < 5.0) return "LTN";
-  if (score < 6.0) return "MTN";
-  if (score < 7.0) return "HTN";
-  if (score < 8.0) return "CHADLITE";
-  return "CHAD";
+  if (score < 5.0) return isFemale ? "LTB" : "LTN";
+  if (score < 6.0) return isFemale ? "MTB" : "MTN";
+  if (score < 7.0) return isFemale ? "HTB" : "HTN";
+  if (score < 8.0) return isFemale ? "STACYLITE" : "CHADLITE";
+  return isFemale ? "STACY" : "CHAD";
 }
 
 function getTierColor(score) {

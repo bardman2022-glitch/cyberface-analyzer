@@ -135,13 +135,14 @@ def calculate_combined_endpoint(data: CombinedData):
     
     # Tier text & color
     def get_tier_info(score):
+        is_female = "Woman" in data.target_group
         if score < 3.0: return "SUB-3", "#ff3333"
         elif score < 4.0: return "SUB", "#ff6666"
-        elif score < 5.0: return "LTN", "#ffcc00"
-        elif score < 6.0: return "MTN", "#00f0ff"
-        elif score < 7.0: return "HTN", "#00ff64"
-        elif score < 8.0: return "CHADLITE", "#bf00ff"
-        else: return "CHAD", "#ff007f"
+        elif score < 5.0: return "LTB" if is_female else "LTN", "#ffcc00"
+        elif score < 6.0: return "MTB" if is_female else "MTN", "#00f0ff"
+        elif score < 7.0: return "HTB" if is_female else "HTN", "#00ff64"
+        elif score < 8.0: return "STACYLITE" if is_female else "CHADLITE", "#bf00ff"
+        else: return "STACY" if is_female else "CHAD", "#ff007f"
         
     tier_text, tier_color = get_tier_info(ai_score)
     

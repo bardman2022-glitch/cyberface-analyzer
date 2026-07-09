@@ -1272,20 +1272,25 @@ class CyberFaceApp(ctk.CTk):
     def get_tier_info(self, score):
         if score is None or score <= 0:
             return "", self.text_muted
+        
+        # Check if female calibration is selected
+        group = self.group_combobox.get()
+        is_female = "Woman" in group
+
         if score < 3.0:
             return "SUB-3", "#ff3333"
         elif score < 4.0:
             return "SUB", "#ff6666"
         elif score < 5.0:
-            return "LTN", "#ffcc00"
+            return "LTB" if is_female else "LTN", "#ffcc00"
         elif score < 6.0:
-            return "MTN", self.neon_cyan
+            return "MTB" if is_female else "MTN", self.neon_cyan
         elif score < 7.0:
-            return "HTN", self.neon_green
+            return "HTB" if is_female else "HTN", self.neon_green
         elif score < 8.0:
-            return "CHADLITE", "#bf00ff"
+            return "STACYLITE" if is_female else "CHADLITE", "#bf00ff"
         else:
-            return "CHAD", self.neon_magenta
+            return "STACY" if is_female else "CHAD", self.neon_magenta
 
     def get_percentile_value(self, score):
         import math
@@ -1474,36 +1479,41 @@ class CyberFaceApp(ctk.CTk):
         self.log_box.configure(state="disabled")
 
     def bind_entry_shortcuts(self, entry):
-        # Bind standard English
-        entry.bind("<Control-v>", lambda e: self.entry_paste(entry))
-        entry.bind("<Control-V>", lambda e: self.entry_paste(entry))
-        entry.bind("<Control-c>", lambda e: self.entry_copy(entry))
-        entry.bind("<Control-C>", lambda e: self.entry_copy(entry))
-        entry.bind("<Control-a>", lambda e: self.entry_select_all(entry))
-        entry.bind("<Control-A>", lambda e: self.entry_select_all(entry))
-        entry.bind("<Control-x>", lambda e: self.entry_cut(entry))
-        entry.bind("<Control-X>", lambda e: self.entry_cut(entry))
+        target_widgets = [entry]
+        if hasattr(entry, "_entry"):
+            target_widgets.append(entry._entry)
 
-        # Cyrillic bindings (wrapped in try-except to prevent bad keysym TclError crashes)
-        cyrillic_bindings = [
-            ("Cyrillic_m", self.entry_paste),
-            ("Cyrillic_M", self.entry_paste),
-            ("Cyrillic_es", self.entry_copy),
-            ("Cyrillic_ES", self.entry_copy),
-            ("Cyrillic_ef", self.entry_select_all),
-            ("Cyrillic_EF", self.entry_select_all),
-            ("Cyrillic_ch", self.entry_cut),
-            ("Cyrillic_CH", self.entry_cut),
-        ]
-        for keysym, func in cyrillic_bindings:
-            try:
-                entry.bind(f"<Control-KeyPress-{keysym}>", lambda e, f=func: f(entry))
-            except Exception:
-                pass
-            try:
-                entry.bind(f"<Control-{keysym}>", lambda e, f=func: f(entry))
-            except Exception:
-                pass
+        for widget in target_widgets:
+            # Bind standard English
+            widget.bind("<Control-v>", lambda e: self.entry_paste(entry))
+            widget.bind("<Control-V>", lambda e: self.entry_paste(entry))
+            widget.bind("<Control-c>", lambda e: self.entry_copy(entry))
+            widget.bind("<Control-C>", lambda e: self.entry_copy(entry))
+            widget.bind("<Control-a>", lambda e: self.entry_select_all(entry))
+            widget.bind("<Control-A>", lambda e: self.entry_select_all(entry))
+            widget.bind("<Control-x>", lambda e: self.entry_cut(entry))
+            widget.bind("<Control-X>", lambda e: self.entry_cut(entry))
+
+            # Cyrillic bindings (wrapped in try-except to prevent bad keysym TclError crashes)
+            cyrillic_bindings = [
+                ("Cyrillic_m", self.entry_paste),
+                ("Cyrillic_M", self.entry_paste),
+                ("Cyrillic_es", self.entry_copy),
+                ("Cyrillic_ES", self.entry_copy),
+                ("Cyrillic_ef", self.entry_select_all),
+                ("Cyrillic_EF", self.entry_select_all),
+                ("Cyrillic_ch", self.entry_cut),
+                ("Cyrillic_CH", self.entry_cut),
+            ]
+            for keysym, func in cyrillic_bindings:
+                try:
+                    widget.bind(f"<Control-KeyPress-{keysym}>", lambda e, f=func: f(entry))
+                except Exception:
+                    pass
+                try:
+                    widget.bind(f"<Control-{keysym}>", lambda e, f=func: f(entry))
+                except Exception:
+                    pass
 
     def entry_paste(self, entry):
         try:

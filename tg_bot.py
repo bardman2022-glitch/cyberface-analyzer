@@ -290,14 +290,15 @@ class CyberFaceBot:
         geom = metrics["overall_geom"]
         
         # Looksmaxxing Tier
+        is_female = "Woman" in group
         def get_tier_info(s):
             if s < 3.0: return "SUB-3", "❌ Low Harmony"
             elif s < 4.0: return "SUB", "❌ Below Average"
-            elif s < 5.0: return "LTN", "⚠️ Lite-Average"
-            elif s < 6.0: return "MTN", "🌐 Mid-Average"
-            elif s < 7.0: return "HTN", "✅ High-Average"
-            elif s < 8.0: return "CHADLITE", "⚡ Chadlite (Excellent)"
-            else: return "CHAD", "🔥 Chad/Stacy (Elite)"
+            elif s < 5.0: return "LTB" if is_female else "LTN", "⚠️ Lite-Average"
+            elif s < 6.0: return "MTB" if is_female else "MTN", "🌐 Mid-Average"
+            elif s < 7.0: return "HTB" if is_female else "HTN", "✅ High-Average"
+            elif s < 8.0: return "STACYLITE" if is_female else "CHADLITE", "⚡ Stacylite (Excellent)" if is_female else "⚡ Chadlite (Excellent)"
+            else: return "STACY" if is_female else "CHAD", "🔥 Stacy (Elite)" if is_female else "🔥 Chad/Stacy (Elite)"
             
         tier_text, tier_desc = get_tier_info(score)
         
