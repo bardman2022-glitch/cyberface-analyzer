@@ -156,22 +156,22 @@ class FaceGeometryAnalyzer:
         
         abs_yaw = abs(yaw_deg)
         if abs_yaw < 15:
-            metrics["pose"] = "Frontal"   # Анфас
-            pose_name = "АНФАС"
-        elif abs_yaw < 50:                # Полупрофиль
+            metrics["pose"] = "Frontal"   # Frontal pose
+            pose_name = "Frontal"
+        elif abs_yaw < 50:                # Semi-profile
             if yaw_deg > 0:
                 metrics["pose"] = "Left Semi-profile"
-                pose_name = "ЛЕВЫЙ ПОЛУПРОФИЛЬ"
+                pose_name = "Left Semi-profile"
             else:
                 metrics["pose"] = "Right Semi-profile"
-                pose_name = "ПРАВЫЙ ПОЛУПРОФИЛЬ"
-        else:                             # Профиль
+                pose_name = "Right Semi-profile"
+        else:                             # Profile
             if yaw_deg > 0:
                 metrics["pose"] = "Left Profile"
-                pose_name = "ЛЕВЫЙ ПРОФИЛЬ"
+                pose_name = "Left Profile"
             else:
                 metrics["pose"] = "Right Profile"
-                pose_name = "ПРАВЫЙ ПРОФИЛЬ"
+                pose_name = "Right Profile"
 
         # ------------------- 1. SET IDEAL GEOMETRIC RATIOS BASED ON GROUP -------------------
         ideal_hw = 1.618
@@ -180,19 +180,19 @@ class FaceGeometryAnalyzer:
         ideal_eye_ratio = 1.0
         ideal_jaw_width = 0.80
         
-        if target_group == "Young Man":    # Юноша (14-20)
+        if target_group == "Young Man":    # Young Man (14-20)
             ideal_hw = 1.58
             ideal_jaw_width = 0.83
             lenient_mode = True
-        elif target_group == "Man":        # Мужчина (21+)
+        elif target_group == "Man":        # Man (21+)
             ideal_hw = 1.618
             ideal_jaw_width = 0.85
             lenient_mode = False
-        elif target_group == "Young Woman":  # Девушка (14-20)
+        elif target_group == "Young Woman":  # Young Woman (14-20)
             ideal_hw = 1.60
             ideal_jaw_width = 0.75
             lenient_mode = True
-        elif target_group == "Woman":      # Женщина (21+)
+        elif target_group == "Woman":      # Woman (21+)
             ideal_hw = 1.63
             ideal_jaw_width = 0.75
             lenient_mode = False
@@ -200,7 +200,7 @@ class FaceGeometryAnalyzer:
             lenient_mode = False
 
         # ------------------- 2. GEOMETRIC ANALYSIS -------------------
-        details = [f"Целевая группа: {target_group}", f"Определен ракурс: {pose_name} ({abs_yaw:.1f}°)"]
+        details = [f"Target Group: {target_group}", f"Detected Pose: {pose_name} ({abs_yaw:.1f}°)"]
 
         if metrics["pose"] == "Frontal":
             # Symmetry
@@ -221,27 +221,27 @@ class FaceGeometryAnalyzer:
                 avg_symmetry = min(100.0, avg_symmetry * 1.03 + 1.0)
                 
             metrics["symmetry"] = round(avg_symmetry, 1)
-            details.append(f"Общая симметрия лица: {avg_symmetry:.1f}%")
+            details.append(f"Facial Symmetry: {avg_symmetry:.1f}%")
             
             # Proportions
             face_height = math.dist(pts[10], pts[152])
             face_width = math.dist(pts[234], pts[454])
             ratio_hw = face_height / face_width if face_width > 0 else 0
             match_hw = 1.0 - abs(ratio_hw - ideal_hw) / ideal_hw
-            details.append(f"Соотношение В/Ш: {ratio_hw:.2f} (Идеал: {ideal_hw:.2f}, Совп: {max(0.0, match_hw)*100:.1f}%)")
+            details.append(f"Height/Width ratio: {ratio_hw:.2f} (Ideal: {ideal_hw:.2f}, Match: {max(0.0, match_hw)*100:.1f}%)")
             
             # Nose
             nose_len = math.dist(pts[6], pts[4])
             nose_width = math.dist(pts[102], pts[329])
             ratio_nose = nose_len / nose_width if nose_width > 0 else 0
             match_nose = 1.0 - abs(ratio_nose - ideal_nose) / ideal_nose
-            details.append(f"Пропорции носа L/W: {ratio_nose:.2f} (Идеал: {ideal_nose:.2f}, Совп: {max(0.0, match_nose)*100:.1f}%)")
+            details.append(f"Nose ratio L/W: {ratio_nose:.2f} (Ideal: {ideal_nose:.2f}, Match: {max(0.0, match_nose)*100:.1f}%)")
 
             # Jaw Width
             jaw_w = math.dist(pts[172], pts[397])
             ratio_jaw = jaw_w / face_width if face_width > 0 else 0
             match_jaw = 1.0 - abs(ratio_jaw - ideal_jaw_width) / ideal_jaw_width
-            details.append(f"Индекс челюсти: {ratio_jaw:.2f} (Идеал: {ideal_jaw_width:.2f}, Совп: {max(0.0, match_jaw)*100:.1f}%)")
+            details.append(f"Jaw Index: {ratio_jaw:.2f} (Ideal: {ideal_jaw_width:.2f}, Match: {max(0.0, match_jaw)*100:.1f}%)")
 
             # Eye ratio
             eye_dist = math.dist(pts[133], pts[362])
@@ -264,7 +264,7 @@ class FaceGeometryAnalyzer:
             nl_angle = self._calculate_angle(pts[6], pts[4], pts[2])
             ideal_angle = 93.0 if "Man" in target_group else 100.0
             match_nl = 1.0 - abs(nl_angle - ideal_angle) / ideal_angle
-            details.append(f"Носогубный угол: {nl_angle:.1f}° (Идеал: {ideal_angle:.1f}°, Совп: {max(0.0, match_nl)*100:.1f}%)")
+            details.append(f"Nasolabial angle: {nl_angle:.1f}° (Ideal: {ideal_angle:.1f}°, Match: {max(0.0, match_nl)*100:.1f}%)")
             
             avg_gr = match_nl * 100.0
             if lenient_mode:
@@ -278,11 +278,11 @@ class FaceGeometryAnalyzer:
             nl_angle = self._calculate_angle(pts[6], pts[4], pts[2])
             ideal_angle = 93.0 if "Man" in target_group else 100.0
             match_nl = 1.0 - abs(nl_angle - ideal_angle) / ideal_angle
-            details.append(f"Носогубный угол: {nl_angle:.1f}° (Идеал: {ideal_angle:.1f}°, Совп: {max(0.0, match_nl)*100:.1f}%)")
+            details.append(f"Nasolabial angle: {nl_angle:.1f}° (Ideal: {ideal_angle:.1f}°, Match: {max(0.0, match_nl)*100:.1f}%)")
             
             profile_angle = self._calculate_angle(pts[10], pts[6], pts[152])
             match_profile = 1.0 - abs(profile_angle - 168.0) / 168.0
-            details.append(f"Профиль лица (угол): {profile_angle:.1f}° (Идеал: 168.0°, Совп: {max(0.0, match_profile)*100:.1f}%)")
+            details.append(f"Profile angle: {profile_angle:.1f}° (Ideal: 168.0°, Match: {max(0.0, match_profile)*100:.1f}%)")
             
             avg_gr = ((match_nl + match_profile) / 2.0) * 100.0
             if lenient_mode:

@@ -83,8 +83,8 @@ class CyberFaceApp(ctk.CTk):
                                       text_color="#ffffff")
         self.tabview.place(x=20, y=5)
         
-        self.tab_rt = self.tabview.add("Реал-тайм Сканер")
-        self.tab_photo = self.tabview.add("Оценка по фото")
+        self.tab_rt = self.tabview.add("Real-time Scanner")
+        self.tab_photo = self.tabview.add("Photo Rating")
         
         # Setup Tab 1: Real-time Scan
         self.setup_realtime_tab()
@@ -108,16 +108,16 @@ class CyberFaceApp(ctk.CTk):
         self.sub_label.place(x=20, y=40)
 
         # Target Group Config Selection
-        self.group_title = ctk.CTkLabel(self.dash_frame, text="ЦЕЛЕВАЯ ГРУППА / КАЛИБРОВКА:", 
+        self.group_title = ctk.CTkLabel(self.dash_frame, text="TARGET GROUP / CALIBRATION:", 
                                          font=ctk.CTkFont(family="Consolas", size=10, weight="bold"), 
                                          text_color=self.neon_cyan)
         self.group_title.place(x=20, y=70)
 
         self.group_combobox = ctk.CTkComboBox(self.dash_frame, 
-                                               values=["Универсальный", "Юноша (14-20)", "Мужчина (21+)", "Девушка (14-20)", "Женщина (21+)", "Абсолютная точность"],
+                                               values=["Universal", "Young Man (14-20)", "Man (21+)", "Young Woman (14-20)", "Woman (21+)", "Strict Accuracy"],
                                                font=ctk.CTkFont(family="Consolas", size=12),
                                                width=360, height=30, command=self.on_group_changed)
-        self.group_combobox.set("Универсальный")
+        self.group_combobox.set("Universal")
         self.group_combobox.place(x=20, y=95)
 
         # Section 1: AI Score
@@ -141,7 +141,7 @@ class CyberFaceApp(ctk.CTk):
                                              text_color=self.neon_cyan)
         self.percentile_label.place(x=245, y=215)
         
-        self.score_desc_label = ctk.CTkLabel(self.dash_frame, text="Оценка привлекательности нейросетью", 
+        self.score_desc_label = ctk.CTkLabel(self.dash_frame, text="Neural Network Attractiveness Score", 
                                              font=ctk.CTkFont(family="Consolas", size=10), 
                                              text_color=self.text_muted)
         self.score_desc_label.place(x=20, y=235)
@@ -153,7 +153,7 @@ class CyberFaceApp(ctk.CTk):
         self.geom_section_label.place(x=20, y=245)
 
         # Metric A: Symmetry
-        self.lbl_sym = ctk.CTkLabel(self.dash_frame, text="Симметрия лица: --%", 
+        self.lbl_sym = ctk.CTkLabel(self.dash_frame, text="Facial Symmetry: --%", 
                                     font=ctk.CTkFont(family="Consolas", size=12, weight="bold"), 
                                     text_color="#ffffff")
         self.lbl_sym.place(x=20, y=270)
@@ -163,7 +163,7 @@ class CyberFaceApp(ctk.CTk):
         self.pb_sym.place(x=20, y=295)
 
         # Metric B: Golden Ratio
-        self.lbl_gr = ctk.CTkLabel(self.dash_frame, text="Золотое сечение (1.618): --%", 
+        self.lbl_gr = ctk.CTkLabel(self.dash_frame, text="Golden Ratio (1.618): --%", 
                                    font=ctk.CTkFont(family="Consolas", size=12, weight="bold"), 
                                    text_color="#ffffff")
         self.lbl_gr.place(x=20, y=315)
@@ -173,7 +173,7 @@ class CyberFaceApp(ctk.CTk):
         self.pb_gr.place(x=20, y=340)
 
         # Metric C: Overall Geometry
-        self.lbl_geom = ctk.CTkLabel(self.dash_frame, text="Общий индекс геометрии: --%", 
+        self.lbl_geom = ctk.CTkLabel(self.dash_frame, text="Overall Geometry Index: --%", 
                                      font=ctk.CTkFont(family="Consolas", size=12, weight="bold"), 
                                      text_color="#ffffff")
         self.lbl_geom.place(x=20, y=360)
@@ -192,7 +192,7 @@ class CyberFaceApp(ctk.CTk):
                                       fg_color="#080c14", text_color=self.neon_cyan, 
                                       font=ctk.CTkFont(family="Consolas", size=11))
         self.log_box.place(x=20, y=450)
-        self.log_box.insert("0.0", "Ожидание детекции лица...\n")
+        self.log_box.insert("0.0", "Waiting for face detection...\n")
         self.log_box.configure(state="disabled")
 
     # ------------------- Tab 1: Real-time Scan Layout -------------------
@@ -201,13 +201,13 @@ class CyberFaceApp(ctk.CTk):
         self.video_frame = ctk.CTkFrame(self.tab_rt, width=600, height=400, fg_color=self.card_color, border_width=1, border_color=self.neon_cyan)
         self.video_frame.place(x=10, y=10)
 
-        self.video_label = ctk.CTkLabel(self.video_frame, text="КАМЕРА ОТКЛЮЧЕНА\n\nЗапустите веб-камеру для сканирования", 
+        self.video_label = ctk.CTkLabel(self.video_frame, text="CAMERA CLOSED\n\nStart webcam to begin scanning", 
                                          font=ctk.CTkFont(family="Consolas", size=13, weight="bold"), 
                                          text_color=self.text_muted)
         self.video_label.place(relx=0.5, rely=0.5, anchor="center")
 
         # Pose HUD label
-        self.lbl_hud_pose = ctk.CTkLabel(self.video_frame, text="РАКУРС: ОЖИДАНИЕ", 
+        self.lbl_hud_pose = ctk.CTkLabel(self.video_frame, text="POSE: WAITING", 
                                          fg_color="#080c14", text_color=self.neon_cyan, 
                                          font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
                                          corner_radius=4, width=220, height=28)
@@ -218,27 +218,27 @@ class CyberFaceApp(ctk.CTk):
         self.rt_controls_frame.place(x=10, y=420)
 
         # Row 1: Actions
-        self.btn_webcam = ctk.CTkButton(self.rt_controls_frame, text="ЗАПУСТИТЬ КАМЕРУ", 
+        self.btn_webcam = ctk.CTkButton(self.rt_controls_frame, text="START CAMERA", 
                                          fg_color="#1f2d3d", hover_color=self.neon_cyan, 
                                          border_width=1, border_color=self.neon_cyan,
                                          text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=12, weight="bold"),
                                          width=160, height=35, command=self.toggle_webcam)
         self.btn_webcam.place(x=15, y=15)
 
-        self.btn_capture = ctk.CTkButton(self.rt_controls_frame, text="СОХРАНИТЬ РАКУРС", 
+        self.btn_capture = ctk.CTkButton(self.rt_controls_frame, text="LOCK POSE", 
                                          fg_color="#1f2d3d", hover_color=self.neon_magenta, 
                                          border_width=1, border_color=self.neon_magenta,
                                          text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=12, weight="bold"),
                                          state="disabled", width=180, height=35, command=self.auto_capture_slot)
         self.btn_capture.place(x=185, y=15)
 
-        self.btn_reset_rt = ctk.CTkButton(self.rt_controls_frame, text="СБРОСИТЬ", 
+        self.btn_reset_rt = ctk.CTkButton(self.rt_controls_frame, text="RESET", 
                                            fg_color="#1a1e29", hover_color="#ff3333",
                                            text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11),
                                            width=80, height=35, command=self.reset_slots)
         self.btn_reset_rt.place(x=375, y=15)
 
-        self.btn_combined_rt = ctk.CTkButton(self.rt_controls_frame, text="СВОДНЫЙ РЕЙТ", 
+        self.btn_combined_rt = ctk.CTkButton(self.rt_controls_frame, text="COMBINED SCORE", 
                                               fg_color="#251a3d", hover_color="#8a5cf6", 
                                               border_width=1, border_color="#8a5cf6",
                                               text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
@@ -247,37 +247,37 @@ class CyberFaceApp(ctk.CTk):
 
         # Row 2: Slots Buttons
         slot_font = ctk.CTkFont(family="Consolas", size=10)
-        self.btn_rt_frontal = ctk.CTkButton(self.rt_controls_frame, text="[ ] Анфас", 
+        self.btn_rt_frontal = ctk.CTkButton(self.rt_controls_frame, text="[ ] Frontal", 
                                              fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                              font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Frontal"))
         self.btn_rt_frontal.place(x=15, y=65)
 
-        self.btn_rt_lsemi = ctk.CTkButton(self.rt_controls_frame, text="[ ] Л.Полу", 
+        self.btn_rt_lsemi = ctk.CTkButton(self.rt_controls_frame, text="[ ] L.Semi", 
                                            fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Left Semi-profile"))
         self.btn_rt_lsemi.place(x=130, y=65)
 
-        self.btn_rt_rsemi = ctk.CTkButton(self.rt_controls_frame, text="[ ] П.Полу", 
+        self.btn_rt_rsemi = ctk.CTkButton(self.rt_controls_frame, text="[ ] R.Semi", 
                                            fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Right Semi-profile"))
         self.btn_rt_rsemi.place(x=245, y=65)
 
-        self.btn_rt_lprof = ctk.CTkButton(self.rt_controls_frame, text="[ ] Л.Проф", 
+        self.btn_rt_lprof = ctk.CTkButton(self.rt_controls_frame, text="[ ] L.Profile", 
                                            fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Left Profile"))
         self.btn_rt_lprof.place(x=360, y=65)
 
-        self.btn_rt_rprof = ctk.CTkButton(self.rt_controls_frame, text="[ ] П.Проф", 
+        self.btn_rt_rprof = ctk.CTkButton(self.rt_controls_frame, text="[ ] R.Profile", 
                                            fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                            font=slot_font, width=105, height=28, command=lambda: self.manual_capture_slot("Right Profile"))
         self.btn_rt_rprof.place(x=475, y=65)
 
         # Row 3: Status Labels
-        self.status_label_rt = ctk.CTkLabel(self.rt_controls_frame, text="СТАТУС: ОЖИДАНИЕ ВВОДА", 
+        self.status_label_rt = ctk.CTkLabel(self.rt_controls_frame, text="STATUS: WAITING FOR START", 
                                             font=ctk.CTkFont(family="Consolas", size=11), text_color=self.neon_cyan)
         self.status_label_rt.place(x=15, y=110)
 
-        self.info_label_rt = ctk.CTkLabel(self.rt_controls_frame, text="В режиме сканирования ИИ выдает мгновенный рейт", 
+        self.info_label_rt = ctk.CTkLabel(self.rt_controls_frame, text="In scanner mode AI outputs real-time rating score", 
                                           font=ctk.CTkFont(family="Consolas", size=9), text_color=self.text_muted)
         self.info_label_rt.place(x=15, y=135)
 
@@ -287,29 +287,29 @@ class CyberFaceApp(ctk.CTk):
         self.photo_preview_frame = ctk.CTkFrame(self.tab_photo, width=300, height=200, fg_color=self.card_color, border_width=1, border_color=self.neon_cyan)
         self.photo_preview_frame.place(x=10, y=10)
 
-        self.photo_preview_label = ctk.CTkLabel(self.photo_preview_frame, text="НЕТ ФОТО\n\nЗагрузите фото для выбранного слота", 
+        self.photo_preview_label = ctk.CTkLabel(self.photo_preview_frame, text="NO PHOTO\n\nUpload photo for selected slot", 
                                                 font=ctk.CTkFont(family="Consolas", size=11), text_color=self.text_muted)
         self.photo_preview_label.place(relx=0.5, rely=0.5, anchor="center")
 
         # Row: Web-camera actions inside Photo tab
         action_font = ctk.CTkFont(family="Consolas", size=11, weight="bold")
-        self.btn_photo_webcam = ctk.CTkButton(self.tab_photo, text="ВКЛ КАМЕРУ", 
+        self.btn_photo_webcam = ctk.CTkButton(self.tab_photo, text="START CAMERA", 
                                               fg_color="#1f2d3d", hover_color=self.neon_cyan, border_width=1, border_color=self.neon_cyan,
                                               text_color="#ffffff", font=action_font, width=90, height=30, command=self.toggle_photo_webcam)
         self.btn_photo_webcam.place(x=10, y=215)
 
-        self.btn_photo_capture = ctk.CTkButton(self.tab_photo, text="СДЕЛАТЬ СНИМОК", 
+        self.btn_photo_capture = ctk.CTkButton(self.tab_photo, text="TAKE SNAPSHOT", 
                                                fg_color="#1f2d3d", hover_color=self.neon_magenta, border_width=1, border_color=self.neon_magenta,
                                                text_color="#ffffff", font=action_font, state="disabled", width=95, height=30, command=self.capture_photo_to_slot)
         self.btn_photo_capture.place(x=105, y=215)
 
-        self.btn_photo_file = ctk.CTkButton(self.tab_photo, text="ЗАГРУЗИТЬ ФАЙЛ", 
+        self.btn_photo_file = ctk.CTkButton(self.tab_photo, text="UPLOAD FILE", 
                                             fg_color="#1f2d3d", hover_color=self.neon_green, border_width=1, border_color=self.neon_green,
                                             text_color="#ffffff", font=action_font, width=90, height=30, command=self.upload_photo_file_click)
         self.btn_photo_file.place(x=205, y=215)
 
         # Selected Slot Title
-        self.lbl_selected_slot = ctk.CTkLabel(self.tab_photo, text="ВЫБРАННЫЙ СЛОТ: АНФАС", 
+        self.lbl_selected_slot = ctk.CTkLabel(self.tab_photo, text="SELECTED SLOT: FRONTAL", 
                                               font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), text_color=self.neon_cyan)
         self.lbl_selected_slot.place(x=10, y=255)
 
@@ -317,38 +317,38 @@ class CyberFaceApp(ctk.CTk):
         btn_h = 32
         font_p = ctk.CTkFont(family="Consolas", size=11)
         
-        self.btn_ph_frontal = ctk.CTkButton(self.tab_photo, text="[ ] Слот 1: Анфас", 
+        self.btn_ph_frontal = ctk.CTkButton(self.tab_photo, text="[ ] Slot 1: Frontal", 
                                             fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                             font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Frontal"))
         self.btn_ph_frontal.place(x=10, y=285)
 
-        self.btn_ph_lsemi = ctk.CTkButton(self.tab_photo, text="[ ] Слот 2: Л. Полупрофиль", 
+        self.btn_ph_lsemi = ctk.CTkButton(self.tab_photo, text="[ ] Slot 2: L. Semi-profile", 
                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Left Semi-profile"))
         self.btn_ph_lsemi.place(x=10, y=320)
 
-        self.btn_ph_rsemi = ctk.CTkButton(self.tab_photo, text="[ ] Слот 3: П. Полупрофиль", 
+        self.btn_ph_rsemi = ctk.CTkButton(self.tab_photo, text="[ ] Slot 3: R. Semi-profile", 
                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Right Semi-profile"))
         self.btn_ph_rsemi.place(x=10, y=355)
 
-        self.btn_ph_lprof = ctk.CTkButton(self.tab_photo, text="[ ] Слот 4: Л. Профиль", 
+        self.btn_ph_lprof = ctk.CTkButton(self.tab_photo, text="[ ] Slot 4: L. Profile", 
                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Left Profile"))
         self.btn_ph_lprof.place(x=10, y=390)
 
-        self.btn_ph_rprof = ctk.CTkButton(self.tab_photo, text="[ ] Слот 5: П. Профиль", 
+        self.btn_ph_rprof = ctk.CTkButton(self.tab_photo, text="[ ] Slot 5: R. Profile", 
                                           fg_color="#101520", hover_color="#202a3d", text_color=self.neon_cyan, 
                                           font=font_p, width=280, height=btn_h, command=lambda: self.select_photo_slot("Right Profile"))
         self.btn_ph_rprof.place(x=10, y=425)
 
         # Action Buttons
-        self.btn_reset_photo = ctk.CTkButton(self.tab_photo, text="СБРОС ФОТО", 
+        self.btn_reset_photo = ctk.CTkButton(self.tab_photo, text="RESET PHOTOS", 
                                              fg_color="#1a1e29", hover_color="#ff3333", text_color="#ffffff",
                                              font=font_p, width=130, height=35, command=self.reset_slots)
         self.btn_reset_photo.place(x=10, y=465)
 
-        self.btn_run_deep = ctk.CTkButton(self.tab_photo, text="ГЛУБОКИЙ АНАЛИЗ", 
+        self.btn_run_deep = ctk.CTkButton(self.tab_photo, text="DEEP ANALYSIS", 
                                           fg_color="#251a3d", hover_color=self.neon_magenta, border_width=1, border_color=self.neon_magenta,
                                           text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
                                           state="disabled", width=140, height=35, command=self.start_deep_analysis_thread)
@@ -359,12 +359,12 @@ class CyberFaceApp(ctk.CTk):
         self.deep_pb.set(0)
         self.deep_pb.place(x=10, y=510)
 
-        self.deep_status_lbl = ctk.CTkLabel(self.tab_photo, text="Ожидание загрузки снимков...", 
+        self.deep_status_lbl = ctk.CTkLabel(self.tab_photo, text="Waiting for photo uploads...", 
                                             font=ctk.CTkFont(family="Consolas", size=10), text_color=self.text_muted)
         self.deep_status_lbl.place(x=10, y=532)
 
         # Right Side: Deep analysis visual console log (width 290)
-        self.console_title = ctk.CTkLabel(self.tab_photo, text="=== ИИ ГЛУБОКАЯ ДИАКНОСТИКА ===", 
+        self.console_title = ctk.CTkLabel(self.tab_photo, text="=== AI DEEP DIAGNOSTICS ===", 
                                           font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), text_color=self.neon_magenta)
         self.console_title.place(x=320, y=10)
 
@@ -372,7 +372,7 @@ class CyberFaceApp(ctk.CTk):
                                             fg_color="#080c14", text_color=self.neon_magenta, 
                                             font=ctk.CTkFont(family="Consolas", size=11))
         self.deep_log_box.place(x=320, y=35)
-        self.deep_log_box.insert("0.0", "Консоль ИИ готова.\n\nЗаполните слоты через камеру или загрузите файлы (Анфас + любой профиль) и запустите 'ГЛУБОКИЙ АНАЛИЗ'.\n")
+        self.deep_log_box.insert("0.0", "AI console is ready.\n\nFill slots via camera or upload files (Frontal + any profile) and run 'DEEP ANALYSIS'.\n")
         self.deep_log_box.configure(state="disabled")
 
     # ------------------- Select Slot in Photo Tab -------------------
@@ -408,17 +408,17 @@ class CyberFaceApp(ctk.CTk):
     def get_selected_target_group_english(self):
         val = self.group_combobox.get()
         mapping = {
-            "Универсальный": "Universal",
-            "Юноша (14-20)": "Young Man",
-            "Мужчина (21+)": "Man",
-            "Девушка (14-20)": "Young Woman",
-            "Женщина (21+)": "Woman",
-            "Абсолютная точность": "Strict"
+            "Universal": "Universal",
+            "Young Man (14-20)": "Young Man",
+            "Man (21+)": "Man",
+            "Young Woman (14-20)": "Young Woman",
+            "Woman (21+)": "Woman",
+            "Strict Accuracy": "Strict"
         }
         return mapping.get(val, "Universal")
 
     def on_group_changed(self, event=None):
-        self.status_label_rt.configure(text=f"КАЛИБРОВКА ИЗМЕНЕНА: {self.group_combobox.get()}")
+        self.status_label_rt.configure(text=f"CALIBRATION CHANGED: {self.group_combobox.get()}")
         if self.current_frame is not None and self.webcam_running:
             self.process_and_display_frame(self.current_frame)
 
@@ -427,7 +427,7 @@ class CyberFaceApp(ctk.CTk):
             # Stop webcam in Photo Tab
             self.photo_webcam_active = False
             self.webcam_running = False
-            self.btn_photo_webcam.configure(text="ВКЛ КАМЕРУ", fg_color="#1f2d3d", border_color=self.neon_cyan)
+            self.btn_photo_webcam.configure(text="START CAMERA", fg_color="#1f2d3d", border_color=self.neon_cyan)
             self.btn_photo_capture.configure(state="disabled")
             if self.cap is not None:
                 self.cap.release()
@@ -440,15 +440,15 @@ class CyberFaceApp(ctk.CTk):
                 
             self.cap = cv2.VideoCapture(0)
             if not self.cap.isOpened():
-                self.deep_status_lbl.configure(text="Ошибка подключения веб-камеры.")
+                self.deep_status_lbl.configure(text="Webcam connection error.")
                 self.cap = None
                 return
                 
             self.photo_webcam_active = True
             self.webcam_running = True
-            self.btn_photo_webcam.configure(text="ВЫКЛ КАМЕРУ", fg_color=self.neon_magenta, border_color=self.neon_magenta)
+            self.btn_photo_webcam.configure(text="STOP CAMERA", fg_color=self.neon_magenta, border_color=self.neon_magenta)
             self.btn_photo_capture.configure(state="normal")
-            self.deep_status_lbl.configure(text="Камера активна. Выберите ракурс на лице.")
+            self.deep_status_lbl.configure(text="Camera active. Select a face pose.")
             self.update_cam()
 
     def capture_photo_to_slot(self):
@@ -469,7 +469,7 @@ class CyberFaceApp(ctk.CTk):
             metrics["raw_score"] = raw_score
             self.save_to_slot(self.selected_pose, self.current_frame, face_crop, metrics, is_webcam=True)
             self.toggle_photo_webcam()
-            self.deep_status_lbl.configure(text=f"Снимок сохранен в слот {self.selected_pose} (без разметки)!")
+            self.deep_status_lbl.configure(text=f"Snapshot saved to slot {self.selected_pose} (no landmarks)!")
             return
 
         pose = self.selected_pose
@@ -482,9 +482,9 @@ class CyberFaceApp(ctk.CTk):
         self.toggle_photo_webcam()
         
         if detected_pose != pose:
-            self.deep_status_lbl.configure(text=f"Снимок сохранен. Предупреждение: обнаружен ракурс {detected_pose}!")
+            self.deep_status_lbl.configure(text=f"Snapshot saved. Warning: detected pose {detected_pose}!")
         else:
-            self.deep_status_lbl.configure(text=f"Снимок успешно сохранен в слот {pose}!")
+            self.deep_status_lbl.configure(text=f"Snapshot successfully saved to slot {pose}!")
 
     def upload_photo_file_click(self):
         pose = self.selected_pose
@@ -503,7 +503,7 @@ class CyberFaceApp(ctk.CTk):
             frame = None
 
         if frame is None:
-            self.deep_status_lbl.configure(text="Не удалось загрузить изображение.")
+            self.deep_status_lbl.configure(text="Failed to load image.")
             return
 
         # Resize and pad border to 640x480
@@ -542,7 +542,7 @@ class CyberFaceApp(ctk.CTk):
             score_10, raw_score = self.predictor.predict(face_crop, target_group=group, is_webcam=False, geom_data=geom_data)
             metrics["ai_score"] = score_10
             metrics["raw_score"] = raw_score
-            self.deep_status_lbl.configure(text=f"Фото загружено в слот: {pose_ru} (без разметки)!")
+            self.deep_status_lbl.configure(text=f"Photo loaded to slot: {pose} (no landmarks)!")
             self.save_to_slot(pose, padded_frame, face_crop, metrics, is_webcam=False)
             return
 
@@ -559,32 +559,25 @@ class CyberFaceApp(ctk.CTk):
 
         # Check for profile mismatches
         detected_pose = metrics["pose"]
-        detected_pose_ru = {
-            "Frontal": "Анфас",
-            "Left Semi-profile": "Левый Полупрофиль",
-            "Right Semi-profile": "Правый Полупрофиль",
-            "Left Profile": "Левый Профиль",
-            "Right Profile": "Правый Профиль"
-        }.get(detected_pose, detected_pose)
 
         if detected_pose != pose:
-            self.deep_status_lbl.configure(text=f"[Предупреждение] Вы загрузили {detected_pose_ru} в слот {pose_ru}!")
+            self.deep_status_lbl.configure(text=f"[Warning] You loaded {detected_pose} into {pose} slot!")
         else:
-            self.deep_status_lbl.configure(text=f"Фото успешно загружено в слот {pose_ru}!")
+            self.deep_status_lbl.configure(text=f"Photo successfully loaded to slot {pose}!")
             
         self.save_to_slot(pose, padded_frame, face_crop, metrics, is_webcam=False)
 
     def toggle_webcam(self):
         if self.webcam_running:
             self.webcam_running = False
-            self.btn_webcam.configure(text="ЗАПУСТИТЬ КАМЕРУ", fg_color="#1f2d3d", border_color=self.neon_cyan)
+            self.btn_webcam.configure(text="START CAMERA", fg_color="#1f2d3d", border_color=self.neon_cyan)
             self.btn_capture.configure(state="disabled")
-            self.status_label_rt.configure(text="СТАТУС: КАМЕРА ОСТАНОВЛЕНА", text_color=self.neon_cyan)
+            self.status_label_rt.configure(text="STATUS: CAMERA CLOSED", text_color=self.neon_cyan)
             if self.cap is not None:
                 self.cap.release()
                 self.cap = None
-            self.video_label.configure(image=None, text="КАМЕРА ОТКЛЮЧЕНА\n\nЗапустите веб-камеру для сканирования")
-            self.lbl_hud_pose.configure(text="РАКУРС: ОТКЛЮЧЕНО", text_color=self.text_muted)
+            self.video_label.configure(image=None, text="CAMERA CLOSED\n\nStart webcam to begin scanning")
+            self.lbl_hud_pose.configure(text="POSE: CLOSED", text_color=self.text_muted)
         else:
             # Stop photo webcam first if running
             if self.photo_webcam_active:
@@ -592,14 +585,14 @@ class CyberFaceApp(ctk.CTk):
                 
             self.cap = cv2.VideoCapture(0)
             if not self.cap.isOpened():
-                self.status_label_rt.configure(text="СТАТУС: ОШИБКА КАМЕРЫ", text_color=self.neon_magenta)
+                self.status_label_rt.configure(text="STATUS: CAMERA ERROR", text_color=self.neon_magenta)
                 self.cap = None
                 return
                 
             self.webcam_running = True
-            self.btn_webcam.configure(text="ОСТАНОВИТЬ КАМЕРУ", fg_color=self.neon_magenta, border_color=self.neon_magenta)
+            self.btn_webcam.configure(text="STOP CAMERA", fg_color=self.neon_magenta, border_color=self.neon_magenta)
             self.btn_capture.configure(state="normal")
-            self.status_label_rt.configure(text="СТАТУС: АКТИВНОЕ СКАНИРОВАНИЕ", text_color=self.neon_green)
+            self.status_label_rt.configure(text="STATUS: ACTIVE SCANNING", text_color=self.neon_green)
             self.update_cam()
 
     def update_cam(self):
@@ -651,16 +644,16 @@ class CyberFaceApp(ctk.CTk):
         # Update HUD labels
         if metrics["detected"]:
             pose_map = {
-                "Frontal": ("РАКУРС: АНФАС", self.neon_cyan),
-                "Left Semi-profile": ("РАКУРС: Л. ПОЛУПРОФИЛЬ", self.neon_magenta),
-                "Right Semi-profile": ("РАКУРС: П. ПОЛУПРОФИЛЬ", self.neon_magenta),
-                "Left Profile": ("РАКУРС: Л. ПРОФИЛЬ", self.neon_green),
-                "Right Profile": ("РАКУРС: П. ПРОФИЛЬ", self.neon_green)
+                "Frontal": ("POSE: FRONTAL", self.neon_cyan),
+                "Left Semi-profile": ("POSE: L. SEMI-PROFILE", self.neon_magenta),
+                "Right Semi-profile": ("POSE: R. SEMI-PROFILE", self.neon_magenta),
+                "Left Profile": ("POSE: L. PROFILE", self.neon_green),
+                "Right Profile": ("POSE: R. PROFILE", self.neon_green)
             }
-            text, color = pose_map.get(metrics["pose"], ("РАКУРС: НЕИЗВЕСТНО", self.text_muted))
+            text, color = pose_map.get(metrics["pose"], ("POSE: UNKNOWN", self.text_muted))
             self.lbl_hud_pose.configure(text=f"{text} ({metrics['yaw']:.1f}°)", text_color=color)
         else:
-            self.lbl_hud_pose.configure(text="РАКУРС: ОЖИДАНИЕ", text_color=self.text_muted)
+            self.lbl_hud_pose.configure(text="POSE: WAITING", text_color=self.text_muted)
 
         self.update_ui_with_metrics(metrics)
         
@@ -704,20 +697,20 @@ class CyberFaceApp(ctk.CTk):
             "symmetry": 0.0,
             "golden_ratio": 70.0,
             "overall_geom": 70.0,
-            "details": ["Профиль зафиксирован вручную.", "Медиа-разметка недоступна (ракурс сбоку).", "Применена стандартная оценка контура."]
+            "details": ["Profile manually fixed.", "Media-markup unavailable (side profile).", "Applied standard contour estimation."]
         }
         return face_crop, metrics
 
     def auto_capture_slot(self):
         if self.latest_metrics is None or not self.latest_metrics["detected"]:
-            self.status_label_rt.configure(text="ОШИБКА: ЛИЦО НЕ НАЙДЕНО", text_color=self.neon_magenta)
+            self.status_label_rt.configure(text="ERROR: FACE NOT DETECTED", text_color=self.neon_magenta)
             return
         pose = self.latest_metrics["pose"]
         self.save_to_slot(pose, self.current_frame, self.latest_face_crop, self.latest_metrics)
 
     def manual_capture_slot(self, pose):
         if self.current_frame is None:
-            self.status_label_rt.configure(text="ОШИБКА: НЕТ АКТИВНОГО КАДРА", text_color=self.neon_magenta)
+            self.status_label_rt.configure(text="ERROR: NO ACTIVE FRAME", text_color=self.neon_magenta)
             return
         if self.latest_metrics is None or not self.latest_metrics["detected"]:
             # Fallback
@@ -732,7 +725,7 @@ class CyberFaceApp(ctk.CTk):
             metrics["ai_score"] = score_10
             metrics["raw_score"] = raw_score
             self.save_to_slot(pose, self.current_frame, face_crop, metrics, is_webcam=True)
-            self.status_label_rt.configure(text=f"СОХРАНЕНО: {pose.upper()} (ВРУЧНУЮ)", text_color=self.neon_cyan)
+            self.status_label_rt.configure(text=f"SAVED: {pose.upper()} (MANUAL)", text_color=self.neon_cyan)
             return
         self.save_to_slot(pose, self.current_frame, self.latest_face_crop, self.latest_metrics, is_webcam=True)
 
@@ -765,7 +758,7 @@ class CyberFaceApp(ctk.CTk):
         score = self.slots[pose]["score"]
         self.update_button_states_for_slot(pose, score)
         
-        self.status_label_rt.configure(text=f"СОХРАНЕНО: {pose.upper()} ({score:.2f})", text_color=self.neon_green)
+        self.status_label_rt.configure(text=f"SAVED: {pose.upper()} ({score:.2f})", text_color=self.neon_green)
         
         # Check if combined analysis should be enabled
         if self.slots["Frontal"] is not None and any(self.slots[k] is not None for k in self.slots if k != "Frontal"):
@@ -774,18 +767,18 @@ class CyberFaceApp(ctk.CTk):
 
     def update_button_states_for_slot(self, pose, score):
         buttons_rt = {
-            "Frontal": (self.btn_rt_frontal, f"[X] Анфас ({score:.1f})", self.neon_cyan),
-            "Left Semi-profile": (self.btn_rt_lsemi, f"[X] Л.Полу ({score:.1f})", self.neon_magenta),
-            "Right Semi-profile": (self.btn_rt_rsemi, f"[X] П.Полу ({score:.1f})", self.neon_magenta),
-            "Left Profile": (self.btn_rt_lprof, f"[X] Л.Проф ({score:.1f})", self.neon_green),
-            "Right Profile": (self.btn_rt_rprof, f"[X] П.Проф ({score:.1f})", self.neon_green)
+            "Frontal": (self.btn_rt_frontal, f"[X] Frontal ({score:.1f})", self.neon_cyan),
+            "Left Semi-profile": (self.btn_rt_lsemi, f"[X] L.Semi ({score:.1f})", self.neon_magenta),
+            "Right Semi-profile": (self.btn_rt_rsemi, f"[X] R.Semi ({score:.1f})", self.neon_magenta),
+            "Left Profile": (self.btn_rt_lprof, f"[X] L.Profile ({score:.1f})", self.neon_green),
+            "Right Profile": (self.btn_rt_rprof, f"[X] R.Profile ({score:.1f})", self.neon_green)
         }
         buttons_ph = {
-            "Frontal": (self.btn_ph_frontal, f"[X] Слот 1: Анфас ({score:.1f})", self.neon_cyan),
-            "Left Semi-profile": (self.btn_ph_lsemi, f"[X] Слот 2: Л. Полупрофиль ({score:.1f})", self.neon_magenta),
-            "Right Semi-profile": (self.btn_ph_rsemi, f"[X] Слот 3: П. Полупрофиль ({score:.1f})", self.neon_magenta),
-            "Left Profile": (self.btn_ph_lprof, f"[X] Слот 4: Л. Профиль ({score:.1f})", self.neon_green),
-            "Right Profile": (self.btn_ph_rprof, f"[X] Слот 5: П. Профиль ({score:.1f})", self.neon_green)
+            "Frontal": (self.btn_ph_frontal, f"[X] Slot 1: Frontal ({score:.1f})", self.neon_cyan),
+            "Left Semi-profile": (self.btn_ph_lsemi, f"[X] Slot 2: L. Semi-profile ({score:.1f})", self.neon_magenta),
+            "Right Semi-profile": (self.btn_ph_rsemi, f"[X] Slot 3: R. Semi-profile ({score:.1f})", self.neon_magenta),
+            "Left Profile": (self.btn_ph_lprof, f"[X] Slot 4: L. Profile ({score:.1f})", self.neon_green),
+            "Right Profile": (self.btn_ph_rprof, f"[X] Slot 5: R. Profile ({score:.1f})", self.neon_green)
         }
 
         # Update RT
@@ -812,8 +805,8 @@ class CyberFaceApp(ctk.CTk):
         
         self.deep_log_box.configure(state="normal")
         self.deep_log_box.delete("0.0", "end")
-        self.deep_log_box.insert("end", "=== ИНИЦИАЛИЗАЦИЯ ИИ ГЛУБОКОГО АНАЛИЗА ===\n")
-        self.deep_log_box.insert("end", f"Калибровка: {self.group_combobox.get()}\n")
+        self.deep_log_box.insert("end", "=== INITIALIZING AI DEEP ANALYSIS ===\n")
+        self.deep_log_box.insert("end", f"Calibration: {self.group_combobox.get()}\n")
         self.deep_log_box.configure(state="disabled")
         
         threading.Thread(target=self.run_deep_analysis_compute, daemon=True).start()
@@ -823,15 +816,15 @@ class CyberFaceApp(ctk.CTk):
         filled_slots = {k: v for k, v in self.slots.items() if v is not None}
         total_steps = len(filled_slots)
         
-        self.log_to_console("[СИСТЕМА] Обнаружено заполненных ракурсов: " + str(total_steps))
+        self.log_to_console("[SYSTEM] Found active slots: " + str(total_steps))
         
         for idx, (pose, data) in enumerate(filled_slots.items()):
-            self.log_to_console(f"\n[РАКУРС] Начало глубокого анализа: {pose.upper()}")
+            self.log_to_console(f"\n[POSE] Starting deep analysis: {pose.upper()}")
             
             def progress_cb(pct, status_text):
                 overall_progress = (idx / total_steps) + (pct / total_steps)
                 self.deep_pb.set(overall_progress)
-                self.deep_status_lbl.configure(text=f"Анализ {pose}: {status_text}")
+                self.deep_status_lbl.configure(text=f"Analyzing {pose}: {status_text}")
                 self.log_to_console(f"  * {status_text} (TTA {int(pct*100)}%)")
                 self.update()
 
@@ -843,14 +836,14 @@ class CyberFaceApp(ctk.CTk):
             if score_10 is not None:
                 self.slots[pose]["score"] = score_10
                 self.slots[pose]["raw_score"] = raw_score
-                self.log_to_console(f"  [РЕЗУЛЬТАТ] TTA оценка ракурса: {score_10:.2f}/10.0 (Сырой: {raw_score:.2f})")
+                self.log_to_console(f"  [RESULT] TTA pose score: {score_10:.2f}/10.0 (Raw: {raw_score:.2f})")
                 
                 # Update GUI buttons text on main thread
                 self.after(10, lambda p=pose, s=score_10: self.update_button_states_for_slot(p, s))
                 
         self.deep_pb.set(1.0)
-        self.deep_status_lbl.configure(text="Вычисление сводного ИИ рейтинга...")
-        self.log_to_console("\n[СИСТЕМА] Все ракурсы обработаны. Сводный расчет...")
+        self.deep_status_lbl.configure(text="Consolidating combined AI ratings...")
+        self.log_to_console("\n[SYSTEM] All slots processed. Calculating combined ratings...")
         
         self.after(200, self.calculate_combined_rating)
         
@@ -872,8 +865,8 @@ class CyberFaceApp(ctk.CTk):
         rprof = self.slots["Right Profile"]
 
         if frontal is None:
-            self.status_label_rt.configure(text="ОШИБКА: ДЛЯ СВОДНОГО РАСЧЕТА НЕОБХОДИМ АНФАС", text_color=self.neon_magenta)
-            self.deep_status_lbl.configure(text="Ошибка: отсутствует Анфас.")
+            self.status_label_rt.configure(text="ERROR: FRONTAL SLOT REQUIRED FOR COMBINED CALCULATION", text_color=self.neon_magenta)
+            self.deep_status_lbl.configure(text="Error: Frontal slot is empty.")
             return
 
         active_slots = {}
@@ -903,36 +896,36 @@ class CyberFaceApp(ctk.CTk):
         tier_text, tier_color = self.get_tier_info(ai_score)
         self.tier_label.configure(text=tier_text, text_color=tier_color)
         top_pct = self.get_percentile_value(ai_score)
-        self.percentile_label.configure(text=f"ТОП: {top_pct:.1f}%", text_color=tier_color)
-        self.lbl_sym.configure(text=f"Сводная симметрия: {symmetry:.1f}%")
+        self.percentile_label.configure(text=f"TOP: {top_pct:.1f}%", text_color=tier_color)
+        self.lbl_sym.configure(text=f"Combined Symmetry: {symmetry:.1f}%")
         self.pb_sym.set(symmetry / 100.0)
-        self.lbl_gr.configure(text=f"Сводное золотосечение: {golden_ratio:.1f}%")
+        self.lbl_gr.configure(text=f"Combined Golden Ratio: {golden_ratio:.1f}%")
         self.pb_gr.set(golden_ratio / 100.0)
-        self.lbl_geom.configure(text=f"Сводная геометрия: {geom_score:.1f}%")
+        self.lbl_geom.configure(text=f"Combined Geometry: {geom_score:.1f}%")
         self.pb_geom.set(geom_score / 100.0)
 
         # Compile Consolidated Report
         report = []
-        report.append("=== СВОДНЫЙ КИБЕР-СЕРТИФИКАТ ===")
-        report.append(f"Группа: {self.group_combobox.get()}")
-        report.append(f"Итоговый ИИ-рейтинг: {ai_score:.2f}/10.0 (ТОП: {top_pct:.1f}% населения)")
-        report.append(f"Итоговая геометрия: {geom_score:.1f}%")
+        report.append("=== COMBINED CYBER-CERTIFICATE ===")
+        report.append(f"Group: {self.group_combobox.get()}")
+        report.append(f"Combined AI Rating: {ai_score:.2f}/10.0 (TOP: {top_pct:.1f}% of population)")
+        report.append(f"Combined Geometry: {geom_score:.1f}%")
         report.append("-" * 32)
         
         for k in active_slots:
-            report.append(f"* {k}: {active_slots[k]['score']:.2f}/10 (Вес: {weights[k]*100:.0f}%)")
+            report.append(f"* {k}: {active_slots[k]['score']:.2f}/10 (Weight: {weights[k]*100:.0f}%)")
         report.append("-" * 32)
         
         if ai_score >= 8.0:
-            verdict = "Выдающиеся пропорции и эстетика. Высокий индекс симметрии."
+            verdict = "Outstanding proportions and aesthetics. High symmetry index."
         elif ai_score >= 6.5:
-            verdict = "Отличная гармония черт лица. Хороший баланс."
+            verdict = "Excellent harmony of facial features. Good balance."
         elif ai_score >= 5.0:
-            verdict = "Сбалансированная структура. Незначительные отклонения от идеалов."
+            verdict = "Balanced structure. Minor deviations from ideals."
         else:
-            verdict = "Выраженная асимметрия контуров. Специфический рельеф лица."
+            verdict = "Pronounced asymmetry of contours. Specific facial relief."
             
-        report.append(f"ВЕРДИКТ ИИ: {verdict}")
+        report.append(f"AI VERDICT: {verdict}")
 
         # Write logs
         self.log_box.configure(state="normal")
@@ -942,40 +935,40 @@ class CyberFaceApp(ctk.CTk):
 
         self.log_to_console("\n" + "\n".join(report))
         
-        self.status_label_rt.configure(text="СВОДНЫЙ РЕЙТИНГ РАССЧИТАН И ОТОБРАЖЕН", text_color=self.neon_green)
-        self.deep_status_lbl.configure(text="Сводный расчет завершен!")
+        self.status_label_rt.configure(text="COMBINED RATING CALCULATED", text_color=self.neon_green)
+        self.deep_status_lbl.configure(text="Combined calculation completed!")
 
     def reset_slots(self):
         for key in self.slots:
             self.slots[key] = None
             
         # Reset buttons texts
-        self.btn_rt_frontal.configure(text="[ ] Анфас", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_lsemi.configure(text="[ ] Л.Полу", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_rsemi.configure(text="[ ] П.Полу", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_lprof.configure(text="[ ] Л.Проф", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_rt_rprof.configure(text="[ ] П.Проф", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_rt_frontal.configure(text="[ ] Frontal", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_rt_lsemi.configure(text="[ ] L.Semi", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_rt_rsemi.configure(text="[ ] R.Semi", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_rt_lprof.configure(text="[ ] L.Profile", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_rt_rprof.configure(text="[ ] R.Profile", fg_color="#101520", text_color=self.neon_cyan)
 
-        self.btn_ph_frontal.configure(text="[ ] Слот 1: Анфас", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_lsemi.configure(text="[ ] Слот 2: Л. Полупрофиль", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_rsemi.configure(text="[ ] Слот 3: П. Полупрофиль", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_lprof.configure(text="[ ] Слот 4: Л. Профиль", fg_color="#101520", text_color=self.neon_cyan)
-        self.btn_ph_rprof.configure(text="[ ] Слот 5: П. Профиль", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_ph_frontal.configure(text="[ ] Slot 1: Frontal", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_ph_lsemi.configure(text="[ ] Slot 2: L. Semi-profile", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_ph_rsemi.configure(text="[ ] Slot 3: R. Semi-profile", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_ph_lprof.configure(text="[ ] Slot 4: L. Profile", fg_color="#101520", text_color=self.neon_cyan)
+        self.btn_ph_rprof.configure(text="[ ] Slot 5: R. Profile", fg_color="#101520", text_color=self.neon_cyan)
 
         self.btn_combined_rt.configure(state="disabled")
         self.btn_run_deep.configure(state="disabled")
-        self.status_label_rt.configure(text="СТАТУС: ВСЕ СЛОТЫ СБРОШЕНЫ", text_color=self.neon_cyan)
+        self.status_label_rt.configure(text="STATUS: ALL SLOTS RESET", text_color=self.neon_cyan)
         
-        self.photo_preview_label.configure(image=self.empty_ctk_img, text="НЕТ ФОТО\n\nЗагрузите фото для выбранного слота")
+        self.photo_preview_label.configure(image=self.empty_ctk_img, text="NO PHOTO\n\nUpload photo for selected slot")
         self.tier_label.configure(text="", text_color=self.text_muted)
         self.percentile_label.configure(text="", text_color=self.text_muted)
         self.deep_pb.set(0)
-        self.deep_status_lbl.configure(text="Ожидание загрузки снимков...")
+        self.deep_status_lbl.configure(text="Waiting for photo uploads...")
 
         # Reset console logs
         self.deep_log_box.configure(state="normal")
         self.deep_log_box.delete("0.0", "end")
-        self.deep_log_box.insert("end", "Консоль ИИ сброшена. Ожидание файлов...\n")
+        self.deep_log_box.insert("end", "AI console reset. Waiting for files...\n")
         self.deep_log_box.configure(state="disabled")
 
         if self.photo_webcam_active:
@@ -989,9 +982,9 @@ class CyberFaceApp(ctk.CTk):
         if score is None or score <= 0:
             return "", self.text_muted
         if score < 3.0:
-            return "САБ 3", "#ff3333"
+            return "SUB-3", "#ff3333"
         elif score < 4.0:
-            return "САБ", "#ff6666"
+            return "SUB", "#ff6666"
         elif score < 5.0:
             return "LTN", "#ffcc00"
         elif score < 6.0:
@@ -1019,20 +1012,20 @@ class CyberFaceApp(ctk.CTk):
                 tier_text, tier_color = self.get_tier_info(metrics['ai_score'])
                 self.tier_label.configure(text=tier_text, text_color=tier_color)
                 top_pct = self.get_percentile_value(metrics['ai_score'])
-                self.percentile_label.configure(text=f"ТОП: {top_pct:.1f}%", text_color=tier_color)
+                self.percentile_label.configure(text=f"TOP: {top_pct:.1f}%", text_color=tier_color)
             else:
-                self.score_label.configure(text="ЗАГРУЗКА...", text_color=self.neon_magenta)
+                self.score_label.configure(text="LOADING...", text_color=self.neon_magenta)
                 self.tier_label.configure(text="", text_color=self.text_muted)
                 self.percentile_label.configure(text="", text_color=self.text_muted)
             
             # Progress bars update
-            self.lbl_sym.configure(text=f"Симметрия лица: {metrics['symmetry']}%")
+            self.lbl_sym.configure(text=f"Facial Symmetry: {metrics['symmetry']}%")
             self.pb_sym.set(metrics["symmetry"] / 100.0)
             
-            self.lbl_gr.configure(text=f"Золотое сечение: {metrics['golden_ratio']}%")
+            self.lbl_gr.configure(text=f"Golden Ratio: {metrics['golden_ratio']}%")
             self.pb_gr.set(metrics["golden_ratio"] / 100.0)
             
-            self.lbl_geom.configure(text=f"Индекс геометрии: {metrics['overall_geom']}%")
+            self.lbl_geom.configure(text=f"Geometry Index: {metrics['overall_geom']}%")
             self.pb_geom.set(metrics["overall_geom"] / 100.0)
 
             # Logs update
@@ -1040,11 +1033,11 @@ class CyberFaceApp(ctk.CTk):
             self.log_box.delete("0.0", "end")
             
             if "ai_score" in metrics:
-                self.log_box.insert("end", f"> [ИИ ОЦЕНКА] Привлекательность: {metrics['ai_score']}/10.0\n")
-                self.log_box.insert("end", f"> [CLIP RAW] Эстетический индекс: {metrics['raw_score']}\n")
+                self.log_box.insert("end", f"> [AI SCORE] Attractiveness: {metrics['ai_score']}/10.0\n")
+                self.log_box.insert("end", f"> [CLIP RAW] Aesthetic Index: {metrics['raw_score']}\n")
                 self.log_box.insert("end", "-" * 38 + "\n")
                 
-            self.log_box.insert("end", "> [ГЕОМЕТРИЯ] Начало анализа:\n")
+            self.log_box.insert("end", "> [GEOMETRY] Analysis summary:\n")
             for detail in metrics["details"]:
                 self.log_box.insert("end", f"* {detail}\n")
             self.log_box.configure(state="disabled")
@@ -1052,16 +1045,16 @@ class CyberFaceApp(ctk.CTk):
             self.score_label.configure(text="--.-- / 10.0", text_color=self.text_muted)
             self.tier_label.configure(text="", text_color=self.text_muted)
             self.percentile_label.configure(text="", text_color=self.text_muted)
-            self.lbl_sym.configure(text="Симметрия лица: --%")
+            self.lbl_sym.configure(text="Facial Symmetry: --%")
             self.pb_sym.set(0)
-            self.lbl_gr.configure(text="Золотое сечение (1.618): --%")
+            self.lbl_gr.configure(text="Golden Ratio (1.618): --%")
             self.pb_gr.set(0)
-            self.lbl_geom.configure(text="Общий индекс геометрии: --%")
+            self.lbl_geom.configure(text="Overall Geometry Index: --%")
             self.pb_geom.set(0)
             
             self.log_box.configure(state="normal")
             self.log_box.delete("0.0", "end")
-            self.log_box.insert("0.0", "Лицо не обнаружено в поле сканирования...\n")
+            self.log_box.insert("0.0", "No face detected in the scanning area...\n")
             self.log_box.configure(state="disabled")
 
     def display_image(self, bgr_img):
