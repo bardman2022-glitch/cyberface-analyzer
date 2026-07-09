@@ -78,6 +78,24 @@ class CyberFaceBot:
         self.log("FastAPI backend server started on localhost:23789.")
 
     def start_tunnel(self):
+        # Ensure SSH key exists to allow localhost.run tunnel to connect
+        ssh_key_path = os.path.expanduser("~/.ssh/id_rsa")
+        if not os.path.exists(ssh_key_path):
+            self.log("SSH key not found. Generating a secure keypair automatically...")
+            ssh_dir = os.path.dirname(ssh_key_path)
+            if not os.path.exists(ssh_dir):
+                os.makedirs(ssh_dir)
+            try:
+                subprocess.run(
+                    ["ssh-keygen", "-t", "rsa", "-b", "2048", "-N", "", "-f", ssh_key_path],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True
+                )
+                self.log("SSH keypair generated successfully.")
+            except Exception as e:
+                self.log(f"Failed to generate SSH key automatically: {e}")
+
         self.log("Starting SSH tunnel to localhost.run...")
         try:
             self.tunnel_process = subprocess.Popen(
