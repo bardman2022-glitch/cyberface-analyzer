@@ -31,17 +31,7 @@ TRANSLATIONS = {
         "upload_file": "UPLOAD FILE",
         "deep_analysis": "DEEP ANALYSIS",
         "reset_photos": "RESET PHOTOS",
-        "tg_sec": "=== TELEGRAM BOT INTEGRATION ===",
-        "bot_inactive": "BOT STATUS: INACTIVE",
-        "bot_active": "BOT STATUS: ACTIVE",
-        "bot_starting": "BOT STATUS: STARTING...",
-        "bot_err": "BOT STATUS: ERROR",
-        "copy_ssh": "🔑 COPY SSH KEY",
         "lang_lbl": "INTERFACE LANGUAGE / ЯЗЫК ИНТЕРФЕЙСА:",
-        "ssh_lbl": "PUBLIC SSH KEY (FOR TELEGRAM MINI APP):",
-        "gen_ssh": "GENERATE NEW SSH KEY",
-        "start_bot": "START BOT",
-        "stop_bot": "STOP BOT",
     },
     "Russian": {
         "title": "CYBERFACE ANALYZER // ГИБРИДНЫЙ ГЕОМЕТРИЧЕСКИЙ И НЕЙРОСЕТЕВОЙ HUD",
@@ -63,17 +53,7 @@ TRANSLATIONS = {
         "upload_file": "ЗАГРУЗИТЬ ФАЙЛ",
         "deep_analysis": "ГЛУБОКИЙ АНАЛИЗ",
         "reset_photos": "СБРОСИТЬ ФОТО",
-        "tg_sec": "=== ИНТЕГРАЦИЯ С ТЕЛЕГРАМ-БОТОМ ===",
-        "bot_inactive": "СТАТУС БОТА: НЕАКТИВЕН",
-        "bot_active": "СТАТУС БОТА: АКТИВЕН",
-        "bot_starting": "СТАТУС БОТА: ЗАПУСК...",
-        "bot_err": "СТАТУС БОТА: ОШИБКА",
-        "copy_ssh": "🔑 СКОПИРОВАТЬ SSH КЛЮЧ",
         "lang_lbl": "ЯЗЫК ИНТЕРФЕЙСА / INTERFACE LANGUAGE:",
-        "ssh_lbl": "ПУБЛИЧНЫЙ SSH-КЛЮЧ (ДЛЯ TELEGRAM MINI APP):",
-        "gen_ssh": "СОЗДАТЬ НОВЫЙ SSH-КЛЮЧ",
-        "start_bot": "ЗАПУСТИТЬ БОТА",
-        "stop_bot": "ОСТАНОВИТЬ БОТА",
     }
 }
 
@@ -103,10 +83,6 @@ class CyberFaceApp(ctk.CTk):
         # Initialize engines
         self.analyzer = FaceGeometryAnalyzer()
         self.predictor = BeautyPredictor()
-
-        # Telegram Bot state
-        self.bot_instance = None
-        self.bot_running = False
 
         # Webcam & State variables
         self.cap = None
@@ -537,69 +513,6 @@ class CyberFaceApp(ctk.CTk):
         self.lang_combobox.set("English")
         self.lang_combobox.place(x=20, y=35)
 
-        # 2. Telegram Bot Integration Section
-        self.bot_section_label_cfg = ctk.CTkLabel(self.tab_config, text="=== TELEGRAM BOT INTEGRATION ===", 
-                                                  font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
-                                                  text_color=self.neon_magenta)
-        self.bot_section_label_cfg.place(x=20, y=90)
-
-        self.bot_token_entry = ctk.CTkEntry(self.tab_config, width=450, height=30, 
-                                            placeholder_text="Enter Telegram Bot Token...", 
-                                            show="*", font=ctk.CTkFont(family="Consolas", size=11))
-        self.bot_token_entry.place(x=20, y=115)
-        self.bind_entry_shortcuts(self.bot_token_entry)
-
-        # Context menu for token entry
-        import tkinter as tk
-        self.token_menu = tk.Menu(self, tearoff=0, bg="#121824", fg="#00f0ff", activebackground="#1f2d3d", activeforeground="#ffffff", bd=1)
-        self.token_menu.add_command(label="Paste / Вставить", command=lambda: self.entry_paste(self.bot_token_entry))
-        self.token_menu.add_command(label="Copy / Копировать", command=lambda: self.entry_copy(self.bot_token_entry))
-        self.token_menu.add_command(label="Cut / Вырезать", command=lambda: self.entry_cut(self.bot_token_entry))
-        self.token_menu.add_command(label="Select All / Выделить всё", command=lambda: self.entry_select_all(self.bot_token_entry))
-        
-        self.bot_token_entry.bind("<Button-3>", self.show_token_context_menu)
-        if hasattr(self.bot_token_entry, "_entry"):
-            self.bot_token_entry._entry.bind("<Button-3>", self.show_token_context_menu)
-
-        self.btn_toggle_bot = ctk.CTkButton(self.tab_config, text="START BOT", 
-                                            fg_color="#1f2d3d", hover_color=self.neon_green, 
-                                            border_width=1, border_color=self.neon_green,
-                                            text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
-                                            width=120, height=30, command=self.toggle_telegram_bot)
-        self.btn_toggle_bot.place(x=480, y=115)
-
-        self.lbl_bot_status = ctk.CTkLabel(self.tab_config, text="BOT STATUS: INACTIVE", 
-                                           font=ctk.CTkFont(family="Consolas", size=10, weight="bold"), 
-                                           text_color=self.text_muted)
-        self.lbl_bot_status.place(x=20, y=155)
-
-        # 3. SSH Key Management Section
-        self.lbl_ssh = ctk.CTkLabel(self.tab_config, text="PUBLIC SSH KEY (FOR TELEGRAM MINI APP):", 
-                                    font=ctk.CTkFont(family="Consolas", size=11, weight="bold"), 
-                                    text_color=self.neon_cyan)
-        self.lbl_ssh.place(x=20, y=200)
-
-        self.txt_ssh_key = ctk.CTkTextbox(self.tab_config, width=580, height=100, 
-                                          fg_color="#080c14", text_color=self.neon_cyan, 
-                                          font=ctk.CTkFont(family="Consolas", size=10))
-        self.txt_ssh_key.place(x=20, y=225)
-        self.refresh_ssh_key_display()
-
-        # Action Buttons for SSH
-        self.btn_copy_ssh = ctk.CTkButton(self.tab_config, text="🔑 COPY SSH KEY", 
-                                          fg_color="#1f2d3d", hover_color=self.neon_cyan, 
-                                          border_width=1, border_color=self.neon_cyan,
-                                          text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
-                                          width=180, height=30, command=self.copy_ssh_key_to_clipboard)
-        self.btn_copy_ssh.place(x=20, y=340)
-
-        self.btn_gen_ssh = ctk.CTkButton(self.tab_config, text="GENERATE NEW SSH KEY", 
-                                         fg_color="#1a1e29", hover_color=self.neon_magenta, 
-                                         border_width=1, border_color=self.neon_magenta,
-                                         text_color="#ffffff", font=ctk.CTkFont(family="Consolas", size=11, weight="bold"),
-                                         width=220, height=30, command=self.regenerate_ssh_key)
-        self.btn_gen_ssh.place(x=210, y=340)
-
     def on_lang_changed(self, event=None):
         lang = self.lang_combobox.get()
         self.apply_language(lang)
@@ -631,16 +544,6 @@ class CyberFaceApp(ctk.CTk):
         
         # Configuration tab
         self.lbl_lang.configure(text=t["lang_lbl"])
-        self.lbl_ssh.configure(text=t["ssh_lbl"])
-        self.btn_copy_ssh.configure(text=t["copy_ssh"])
-        self.btn_gen_ssh.configure(text=t["gen_ssh"])
-        self.bot_section_label_cfg.configure(text=t["tg_sec"])
-        if not self.bot_running:
-            self.lbl_bot_status.configure(text=t["bot_inactive"])
-            self.btn_toggle_bot.configure(text=t["start_bot"])
-        else:
-            self.lbl_bot_status.configure(text=t["bot_active"])
-            self.btn_toggle_bot.configure(text=t["stop_bot"])
 
     def refresh_ssh_key_display(self):
         ssh_key_path = os.path.expanduser("~/.ssh/id_rsa.pub")
@@ -1413,79 +1316,6 @@ class CyberFaceApp(ctk.CTk):
         self.video_label.configure(image=ctk_img, text="")
         self.video_label.image = ctk_img
 
-    def toggle_telegram_bot(self):
-        lang = self.lang_combobox.get()
-        t = TRANSLATIONS[lang]
-
-        if self.bot_running:
-            self.bot_running = False
-            if self.bot_instance:
-                self.bot_instance.stop()
-                self.bot_instance = None
-            self.btn_toggle_bot.configure(text=t["start_bot"], fg_color="#1f2d3d", border_color=self.neon_green, hover_color=self.neon_green)
-            self.lbl_bot_status.configure(text=t["bot_inactive"], text_color=self.text_muted)
-            self.log_to_console_on_gui("[GUI] Telegram bot stopped.")
-        else:
-            token = self.bot_token_entry.get().strip()
-            if not token:
-                self.lbl_bot_status.configure(text=t["bot_err"] + " (NO TOKEN)", text_color=self.neon_magenta)
-                return
-                
-            # Ensure SSH key exists (prompt user if missing)
-            ssh_key_path = os.path.expanduser("~/.ssh/id_rsa")
-            if not os.path.exists(ssh_key_path):
-                from tkinter import messagebox
-                ans = messagebox.askyesno(
-                    "SSH Key Required",
-                    "An SSH keypair is required to connect the Telegram Mini App secure tunnel.\n\n"
-                    "Would you like to automatically generate a secure SSH key now?"
-                )
-                if ans:
-                    self.log_to_console_on_gui("[GUI] Generating secure SSH keypair...")
-                    ssh_dir = os.path.dirname(ssh_key_path)
-                    if not os.path.exists(ssh_dir):
-                        os.makedirs(ssh_dir)
-                    try:
-                        import subprocess
-                        subprocess.run(
-                            ["ssh-keygen", "-t", "rsa", "-b", "2048", "-N", "", "-f", ssh_key_path],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            check=True
-                        )
-                        self.log_to_console_on_gui("[GUI] SSH keypair generated successfully.")
-                        self.refresh_ssh_key_display()
-                    except Exception as e:
-                        self.log_to_console_on_gui(f"[GUI] Error generating SSH key: {e}")
-                        self.lbl_bot_status.configure(text=t["bot_err"] + " (SSH KEY)", text_color=self.neon_magenta)
-                        return
-                else:
-                    self.log_to_console_on_gui("[GUI] SSH key generation cancelled. Tunnel will not connect.")
-                    self.lbl_bot_status.configure(text=t["bot_err"] + " (NO SSH KEY)", text_color=self.neon_magenta)
-                    return
-
-            self.lbl_bot_status.configure(text=t["bot_starting"], text_color=self.neon_cyan)
-            
-            # Initialize CyberFaceBot
-            from tg_bot import CyberFaceBot
-            self.bot_instance = CyberFaceBot(
-                token=token, 
-                analyzer=self.analyzer, 
-                predictor=self.predictor, 
-                on_log_callback=self.log_to_console_on_gui
-            )
-            
-            success = self.bot_instance.start()
-            if success:
-                self.bot_running = True
-                self.btn_toggle_bot.configure(text=t["stop_bot"], fg_color="#1a1e29", border_color=self.neon_magenta, hover_color="#ff3333")
-                self.lbl_bot_status.configure(text=t["bot_active"], text_color=self.neon_green)
-                self.log_to_console_on_gui("[GUI] Telegram bot started successfully.")
-                self.save_config()
-            else:
-                self.lbl_bot_status.configure(text=t["bot_err"], text_color=self.neon_magenta)
-                self.bot_instance = None
-
     def log_to_console_on_gui(self, text):
         self.after(10, lambda: self._safe_log_to_gui(text))
 
@@ -1495,77 +1325,6 @@ class CyberFaceApp(ctk.CTk):
         self.log_box.see("end")
         self.log_box.configure(state="disabled")
 
-    def bind_entry_shortcuts(self, entry):
-        target_widgets = [entry]
-        if hasattr(entry, "_entry"):
-            target_widgets.append(entry._entry)
-
-        for widget in target_widgets:
-            # Bind standard English
-            widget.bind("<Control-v>", lambda e: self.entry_paste(entry))
-            widget.bind("<Control-V>", lambda e: self.entry_paste(entry))
-            widget.bind("<Control-c>", lambda e: self.entry_copy(entry))
-            widget.bind("<Control-C>", lambda e: self.entry_copy(entry))
-            widget.bind("<Control-a>", lambda e: self.entry_select_all(entry))
-            widget.bind("<Control-A>", lambda e: self.entry_select_all(entry))
-            widget.bind("<Control-x>", lambda e: self.entry_cut(entry))
-            widget.bind("<Control-X>", lambda e: self.entry_cut(entry))
-
-            # Cyrillic bindings (wrapped in try-except to prevent bad keysym TclError crashes)
-            cyrillic_bindings = [
-                ("Cyrillic_m", self.entry_paste),
-                ("Cyrillic_M", self.entry_paste),
-                ("Cyrillic_es", self.entry_copy),
-                ("Cyrillic_ES", self.entry_copy),
-                ("Cyrillic_ef", self.entry_select_all),
-                ("Cyrillic_EF", self.entry_select_all),
-                ("Cyrillic_ch", self.entry_cut),
-                ("Cyrillic_CH", self.entry_cut),
-            ]
-            for keysym, func in cyrillic_bindings:
-                try:
-                    widget.bind(f"<Control-KeyPress-{keysym}>", lambda e, f=func: f(entry))
-                except Exception:
-                    pass
-                try:
-                    widget.bind(f"<Control-{keysym}>", lambda e, f=func: f(entry))
-                except Exception:
-                    pass
-
-    def entry_paste(self, entry):
-        widget = entry._entry if hasattr(entry, "_entry") else entry
-        widget.event_generate("<<Paste>>")
-        return "break"
-
-    def entry_copy(self, entry):
-        widget = entry._entry if hasattr(entry, "_entry") else entry
-        widget.event_generate("<<Copy>>")
-        return "break"
-
-    def entry_select_all(self, entry):
-        entry.select_range(0, "end")
-        entry.icursor("end")
-        return "break"
-
-    def entry_cut(self, entry):
-        widget = entry._entry if hasattr(entry, "_entry") else entry
-        widget.event_generate("<<Cut>>")
-        return "break"
-
-    def copy_ssh_key_to_clipboard(self):
-        ssh_key_path = os.path.expanduser("~/.ssh/id_rsa.pub")
-        if os.path.exists(ssh_key_path):
-            try:
-                with open(ssh_key_path, "r", encoding="utf-8") as f:
-                    pub_key = f.read().strip()
-                self.clipboard_clear()
-                self.clipboard_append(pub_key)
-                self.log_to_console_on_gui("[GUI] Public SSH key copied to clipboard!")
-            except Exception as e:
-                self.log_to_console_on_gui(f"[GUI] Error reading SSH key: {e}")
-        else:
-            self.log_to_console_on_gui("[GUI] SSH public key not found. Start the bot first to generate it.")
-
     def load_config(self):
         import json
         config_path = "config.json"
@@ -1573,11 +1332,6 @@ class CyberFaceApp(ctk.CTk):
             try:
                 with open(config_path, "r", encoding="utf-8") as f:
                     config = json.load(f)
-                
-                # Apply token
-                token = config.get("bot_token", "")
-                if token:
-                    self.bot_token_entry.insert(0, token)
                 
                 # Apply language
                 lang = config.get("language", "English")
@@ -1589,7 +1343,6 @@ class CyberFaceApp(ctk.CTk):
     def save_config(self):
         import json
         config = {
-            "bot_token": self.bot_token_entry.get().strip(),
             "language": self.lang_combobox.get()
         }
         try:
@@ -1598,15 +1351,7 @@ class CyberFaceApp(ctk.CTk):
         except Exception as e:
             print(f"Error saving config: {e}")
 
-    def show_token_context_menu(self, event):
-        try:
-            self.token_menu.tk_popup(event.x_root, event.y_root)
-        finally:
-            self.token_menu.grab_release()
-
     def destroy(self):
         if self.cap is not None:
             self.cap.release()
-        if self.bot_running and self.bot_instance:
-            self.bot_instance.stop()
         super().destroy()
